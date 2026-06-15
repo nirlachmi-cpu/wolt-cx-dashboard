@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wolt Market IL — CX Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/theme/mermaid.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gridjs@5.0.2/dist/gridjs.umd.js" integrity="sha384-/XXDzxe4FsGiAe50i/u9pY/Vy/uX654MHB1xoc1BJNnH1WXHhqHga9g3q5tF4gj7" crossorigin="anonymous"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; background: #f2f2f7; color: #1c1c1e; font-size: 14px; }
+.container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+
+/* Header */
+.header { text-align: center; margin-bottom: 20px; }
+.header-brand { font-size: 11px; font-weight: 600; color: #8e8e93; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.header-title { font-size: 24px; font-weight: 700; color: #1c1c1e; letter-spacing: -0.02em; margin-bottom: 4px; }
+.header-sub { font-size: 12px; color: #8e8e93; }
+
+/* Week Selector */
+.week-selector-card { background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.week-selector-label { font-size: 10px; font-weight: 600; color: #8e8e93; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+.week-controls { display: flex; align-items: center; gap: 12px; }
+.week-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #e5e5ea; background: #fff; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #1c1c1e; flex-shrink: 0; transition: all 0.15s; }
+.week-btn:hover:not(:disabled) { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
+.week-btn:disabled { opacity: 0.25; cursor: default; }
+.week-slider-wrap { flex: 1; }
+.week-slider { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; background: #e5e5ea; outline: none; cursor: pointer; }
+.week-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #1c1c1e; cursor: pointer; }
+.week-display { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: #8e8e93; }
+.week-current { font-size: 14px; font-weight: 600; color: #1c1c1e; text-align: center; min-width: 100px; }
+.week-compare { font-size: 11px; color: #8e8e93; text-align: center; }
+
+/* Cards */
+.card { background: #fff; border-radius: 14px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+.card-label { font-size: 10px; font-weight: 600; color: #8e8e93; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+
+/* Market Numbers */
+.metrics-row { display: flex; gap: 0; }
+.metric-cell { flex: 1; text-align: center; padding: 0 10px; border-right: 1px solid #f2f2f7; }
+.metric-cell:last-child { border-right: none; }
+.metric-value { font-size: 22px; font-weight: 700; color: #1c1c1e; line-height: 1.1; }
+.metric-wow { font-size: 11px; margin-top: 3px; font-weight: 500; }
+.metric-target { font-size: 10px; color: #8e8e93; margin-top: 2px; }
+.metric-name { font-size: 10px; font-weight: 600; color: #8e8e93; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 6px; }
+.up { color: #34c759; } .down { color: #ff3b30; } .warn { color: #ff9500; } .neu { color: #8e8e93; }
+
+/* Notice */
+.notice { border-radius: 10px; padding: 9px 14px; margin-bottom: 12px; font-size: 11px; }
+.notice-warn { background: #fff8e6; color: #8e6000; }
+
+/* Movers */
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+.tab { padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; background: #f2f2f7; color: #8e8e93; border: none; transition: all 0.15s; }
+.tab.active { background: #1c1c1e; color: #fff; }
+.movers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.movers-col-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.mover-row { display: flex; align-items: center; padding: 5px 0; border-bottom: 1px solid #f9f9f9; font-size: 12px; }
+.mover-name { flex: 1; color: #1c1c1e; }
+.mover-delta { font-weight: 600; min-width: 70px; text-align: right; }
+.mover-pct { color: #8e8e93; font-size: 10px; min-width: 50px; text-align: right; }
+
+/* Complaint bars */
+.complaint-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.complaint-bar-wrap { width: 120px; height: 6px; background: #f2f2f7; border-radius: 3px; overflow: hidden; }
+.complaint-bar { height: 100%; border-radius: 3px; }
+.complaint-count { font-size: 13px; font-weight: 700; min-width: 22px; text-align: right; }
+.complaint-stores { font-size: 10px; color: #8e8e93; margin-top: 1px; }
+
+/* Actions */
+.action-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+.action-row:last-child { border-bottom: none; }
+.action-bar { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; min-height: 36px; }
+.action-title { font-size: 13px; font-weight: 600; color: #1c1c1e; }
+.action-detail { font-size: 11px; color: #8e8e93; margin-top: 2px; }
+.action-stores { font-size: 10px; color: #ff9500; margin-top: 3px; }
+
+/* Badge */
+.badge { display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.b-red { background: #fff0f0; color: #ff3b30; }
+.b-orange { background: #fff5e6; color: #ff9500; }
+.b-green { background: #f0fff5; color: #34c759; }
+.b-gray { background: #f2f2f7; color: #8e8e93; }
+
+/* Grid overrides */
+.gridjs-wrapper { border-radius: 10px; overflow: hidden; box-shadow: none; }
+.gridjs-th { background: #f9f9f9 !important; font-size: 10px !important; font-weight: 600 !important; color: #8e8e93 !important; text-transform: uppercase !important; letter-spacing: 0.05em !important; border: none !important; }
+.gridjs-td { font-size: 12px !important; border-color: #f9f9f9 !important; vertical-align: middle !important; }
+.gridjs-search input { border-radius: 8px !important; border-color: #e5e5ea !important; font-size: 12px !important; }
+
+.footer { text-align: center; margin-top: 20px; font-size: 11px; color: #c7c7cc; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-brand">Wolt Market Israel</div>
+    <div class="header-title">CX Weekly Dashboard 🇮🇱</div>
+    <div class="header-sub" id="header-sub">Loading...</div>
+  </div>
+
+  <!-- Week Selector -->
+  <div class="week-selector-card">
+    <div class="week-selector-label">Week</div>
+    <div class="week-controls">
+      <button class="week-btn" id="btn-prev" onclick="changeWeek(-1)">‹</button>
+      <div class="week-slider-wrap">
+        <input type="range" class="week-slider" id="week-slider" min="1" oninput="setWeek(parseInt(this.value))">
+        <div class="week-display">
+          <span id="week-first-label" style="font-size:10px;color:#c7c7cc"></span>
+          <span id="week-last-label" style="font-size:10px;color:#c7c7cc"></span>
+        </div>
+      </div>
+      <button class="week-btn" id="btn-next" onclick="changeWeek(1)">›</button>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <span class="week-current" id="week-current-label">—</span><br>
+      <span class="week-compare" id="week-compare-label">vs —</span>
+    </div>
+  </div>
+
+  <!-- Market Numbers -->
+  <div class="card">
+    <div class="card-label">Market Numbers</div>
+    <div class="metrics-row" id="market-metrics">
+      <div class="metric-cell" id="mc-orders">
+        <div class="metric-value">—</div><div class="metric-wow neu">—</div><div class="metric-name">Orders</div>
+      </div>
+      <div class="metric-cell" id="mc-rating">
+        <div class="metric-value">—</div><div class="metric-wow neu">—</div><div class="metric-target">Target 4.70</div><div class="metric-name">Avg Rating</div>
+      </div>
+      <div class="metric-cell" id="mc-pofr">
+        <div class="metric-value">—</div><div class="metric-wow neu">—</div><div class="metric-target">Target 95.2%</div><div class="metric-name">Avg POFR</div>
+      </div>
+      <div class="metric-cell" id="mc-settlements">
+        <div class="metric-value">—</div><div class="metric-wow neu">—</div><div class="metric-name">Settlements</div>
+      </div>
+      <div class="metric-cell" id="mc-uptime">
+        <div class="metric-value">—</div><div class="metric-wow neu">—</div><div class="metric-name">Up-Time</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pofr-notice" class="notice notice-warn" style="display:none"></div>
+
+  <!-- Biggest Movers -->
+  <div class="card">
+    <div class="card-label">Biggest Movers</div>
+    <div class="tabs">
+      <button class="tab active" onclick="showMovers('settlement')">Settlements WoW</button>
+      <button class="tab" onclick="showMovers('rating')">Rating WoW</button>
+    </div>
+    <div id="movers-settlement"></div>
+    <div id="movers-rating" style="display:none"></div>
+  </div>
+
+  <!-- All Stores Table -->
+  <div class="card">
+    <div class="card-label">All Stores</div>
+    <div id="store-table"></div>
+  </div>
+
+  <!-- Complaint Themes (static — based on 8-Jun upload) -->
+  <div class="card">
+    <div class="card-label">Complaint Themes &nbsp;<span style="font-weight:400;color:#8e8e93;text-transform:none;letter-spacing:0;font-size:11px">71 relevant · 8-Jun week · delivery/courier excluded</span></div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">🍖</span>
+      <div style="flex:1"><div style="font-size:12px">Spoiled / expired / low freshness</div><div class="complaint-stores">Kfar Saba · Kiryon · Rishon Maarav · Rehovot · HaRova</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#ff3b30;width:100%"></div></div>
+      <span class="complaint-count down">20</span>
+    </div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">🧊</span>
+      <div style="flex:1"><div style="font-size:12px">Cold chain — arrived warm or melted</div><div class="complaint-stores">Herzliya · Ramat Hasharon · Rehovot · Rishon Maarav · Yad Eliyahu</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#ff9500;width:75%"></div></div>
+      <span class="complaint-count warn">15</span>
+    </div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">🔄</span>
+      <div style="flex:1"><div style="font-size:12px">Wrong item / silent substitution</div><div class="complaint-stores">Kiryat Ono · Herzliya · Netanya Poleg · Be'er Sheva · Florentine</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#ff9500;width:65%"></div></div>
+      <span class="complaint-count warn">13</span>
+    </div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">📦</span>
+      <div style="flex:1"><div style="font-size:12px">Missing items</div><div class="complaint-stores">Petah Tikva · Neot Shamir · Bialik · Ashdod · Kiryat Eliezer</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#ff9500;width:50%"></div></div>
+      <span class="complaint-count warn">10</span>
+    </div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">🛍️</span>
+      <div style="flex:1"><div style="font-size:12px">Packaging — open, spilled, torn bag</div><div class="complaint-stores">Ben Yehuda · Netanya Center · Wolfson · Florentine · Kiryat Ono</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#8e8e93;width:45%"></div></div>
+      <span class="complaint-count neu">9</span>
+    </div>
+    <div class="complaint-row">
+      <span style="font-size:16px;width:22px">🥚</span>
+      <div style="flex:1"><div style="font-size:12px">Broken or spoiled eggs</div><div class="complaint-stores">Kiryat Ono · Kiryon · Rehovot · Kiryat Eliezer</div></div>
+      <div class="complaint-bar-wrap"><div class="complaint-bar" style="background:#8e8e93;width:20%"></div></div>
+      <span class="complaint-count neu">4</span>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="card">
+    <div class="card-label">✅ Actions for Next Week</div>
+    <div class="action-row"><div class="action-bar" style="background:#ff3b30"></div><div><div class="action-title">Add ice pack to every cold/frozen order — mandatory in summer</div><div class="action-detail">Ice cream, meat, dairy — if it's cold in the store, it must arrive cold</div><div class="action-stores">Herzliya · Ramat Hasharon · Rehovot · Rishon Maarav · Yad Eliyahu · Petah Tikva · Kfar Saba · Kiryat Eliezer</div></div></div>
+    <div class="action-row"><div class="action-bar" style="background:#ff3b30"></div><div><div class="action-title">Freshness check before packing — reject anything within 3 days of expiry</div><div class="action-detail">Meat, bread, cheese, produce, flowers — smell, mold, bloated carton = discard</div><div class="action-stores">Kfar Saba · Rehovot · Kiryon · Rishon Maarav · HaRova · Ramat Hasharon · Jerusalem Talpiot</div></div></div>
+    <div class="action-row"><div class="action-bar" style="background:#ff9500"></div><div><div class="action-title">Call customer before substituting any item — no silent swaps</div><div class="action-detail">13 wrong-item complaints this week. Cancel the item if no answer.</div><div class="action-stores">Kiryat Ono · Herzliya · Netanya Poleg · Be'er Sheva · Florentine</div></div></div>
+    <div class="action-row"><div class="action-bar" style="background:#ff9500"></div><div><div class="action-title">Scan pick-list against order before handoff — no partial orders out the door</div><div class="action-detail">Notify customer about missing item before courier departs</div><div class="action-stores">Petah Tikva · Neot Shamir · Bialik · Ashdod · Kiryat Eliezer</div></div></div>
+    <div class="action-row"><div class="action-bar" style="background:#8e8e93"></div><div><div class="action-title">Don't overload paper bags — heavy + liquid = double bag</div><div class="action-detail">Test bag weight before sealing. Torn bags = instant 1-star review.</div><div class="action-stores">Ben Yehuda · Netanya Center · Wolfson</div></div></div>
+    <div class="action-row"><div class="action-bar" style="background:#8e8e93"></div><div><div class="action-title">Eggs in a padded separate tray — never under heavy items</div><div class="action-detail">4 complaints about broken or moldy eggs this week</div><div class="action-stores">Kiryat Ono · Rehovot · Kiryon · Kiryat Eliezer</div></div></div>
+  </div>
+
+  <div class="footer">Wolt Market Israel · Nir Lachmi · Data: WoW CX Overview sheet + Up-Time report</div>
+</div>
+
+<script>
+const RAW = {"weeks": ["5-Jan", "12-Jan", "19-Jan", "26-Jan", "2-Feb", "9-Feb", "16-Feb", "23-Feb", "2-Mar", "9-Mar", "16-Mar", "23-Mar", "30-Mar", "6-Apr", "13-Apr", "20-Apr", "27-Apr", "4-May", "11-May", "18-May", "25-May", "1-Jun", "8-Jun", "15-Jun"], "market": {"orders": [78342.0, 80457.0, 77087.0, null, 78244.0, 80881.0, 80162.0, 81724.0, 74060.0, 74611.0, 71193.0, 69882.0, 76683.0, 80490.0, 84233.0, 78126.0, 82518.0, 79093.0, 77792.0, 95912.0, 83808.0, 84305.0, null, null], "rating": [4.66, 4.66, 4.7, 4.72, 4.68, 4.7, 4.69, 4.66, 4.73, 4.71, 4.67, 4.68, 4.69, 4.66, 4.65, 4.64, 4.64, 4.64, 4.61, 4.55, 4.61, 4.59, null, null], "settlements": [86113.0, 116374.0, 74889.0, 97708.0, 64277.0, 80733.0, 72331.0, 84829.0, 90281.0, 50772.0, 59543.0, 44938.0, 48151.0, 61083.0, 120677.0, 117406.0, 100803.0, 109355.0, 128024.0, null, 174484.0, 116015.0, null, null], "pofr": [87.6, 84.4, 88.5, 87.1, 88.5, 83.3, 86.3, 80.7, 80.7, 86.4, 90.2, 82.2, 91.6, 91.5, 90.9, 91.3, 91.2, 91.9, 90.23, 89.11, null, 91.18, null, null], "adt": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}, "store_ratings": {"Kiryon": [4.77, 4.77, 4.8, 4.77, 4.85, 4.8, 4.85, 4.76, 4.79, 4.74, 4.75, 4.77, 4.81, 4.72, 4.72, 4.71, 4.85, 4.74, 4.78, 4.72, 4.75, 4.79, 4.7, null], "Kiryat Eliezer": [4.78, 4.69, 4.67, 4.8, 4.76, 4.78, 4.81, 4.77, 4.87, 4.86, 4.8, 4.82, 4.85, 4.78, 4.8, 4.85, 4.83, 4.81, 4.85, 4.76, 4.76, 4.78, 4.69, null], "Wolfson": [4.7, 4.68, 4.73, 4.74, 4.74, 4.76, 4.7, 4.76, 4.77, 4.78, 4.77, 4.79, 4.72, 4.73, 4.69, 4.7, 4.75, 4.81, 4.76, 4.67, 4.64, 4.73, 4.71, null], "Ramat Hasharon": [4.63, 4.54, 4.67, 4.63, 4.7, 4.69, 4.78, 4.54, 4.8, 4.7, 4.59, 4.75, 4.76, 4.67, 4.63, 4.68, 4.73, 4.7, 4.63, 4.48, 4.68, 4.62, 4.77, null], "Rishon Maarav": [4.64, 4.61, 4.66, 4.7, 4.55, 4.66, 4.61, 4.66, 4.7, 4.68, 4.66, 4.64, 4.63, 4.65, 4.69, 4.67, 4.73, 4.59, 4.62, 4.47, 4.67, 4.61, 4.33, null], "Netanya Center": [4.59, 4.76, 4.74, 4.77, 4.78, 4.78, 4.83, 4.73, 4.78, 4.74, 4.73, 4.71, 4.76, 4.6, 4.67, 4.72, 4.72, 4.76, 4.61, 4.67, 4.69, 4.62, 4.63, null], "Netanya Poleg": [4.66, 4.64, 4.68, 4.67, 4.67, 4.72, 4.62, 4.77, 4.72, 4.91, 4.64, 4.6, 4.76, 4.8, 4.74, 4.62, 4.72, 4.55, 4.72, 4.5, 4.71, 4.69, 4.6, null], "Top Dan": [4.6, 4.5, 4.64, 4.68, 4.59, 4.74, 4.77, 4.58, 4.68, 4.84, 4.58, 4.74, 4.61, 4.68, 4.59, 4.54, 4.72, 4.55, 4.57, 4.59, 4.53, 4.47, 4.48, null], "Ashkelon": [4.74, 4.69, 4.81, 4.63, 4.55, 4.66, 4.74, 4.67, 4.79, 4.72, 4.86, 4.64, 4.64, 4.58, 4.65, 4.59, 4.69, 4.64, 4.64, 4.54, 4.63, 4.65, 4.6, null], "Florentine": [4.61, 4.56, 4.7, 4.74, 4.79, 4.69, 4.76, 4.74, 4.79, 4.75, 4.65, 4.75, 4.68, 4.69, 4.76, 4.67, 4.68, 4.71, 4.68, 4.76, 4.8, 4.62, 4.78, null], "HaRova": [4.69, 4.64, 4.72, 4.7, 4.76, 4.66, 4.7, 4.46, 4.82, 4.71, 4.65, 4.67, 4.53, 4.71, 4.56, 4.66, 4.68, 4.66, 4.61, 4.46, 4.65, 4.55, 4.63, null], "Herzliya": [4.58, 4.62, 4.65, 4.64, 4.66, 4.71, 4.66, 4.63, 4.82, 4.56, 4.58, 4.69, 4.67, 4.71, 4.63, 4.63, 4.68, 4.73, 4.6, 4.49, 4.5, 4.68, 4.7, null], "Lev Haaretz": [4.82, 4.73, 4.73, 4.75, 4.78, 4.74, 4.76, 4.78, 4.76, 4.87, 4.81, 4.73, 4.73, 4.72, 4.79, 4.65, 4.66, 4.66, 4.75, 4.46, 4.64, 4.49, 4.68, null], "Ness Ziona": [4.76, 4.7, 4.66, 4.79, 4.78, 4.6, 4.58, 4.73, 4.58, 4.58, 4.63, 4.71, 4.81, 4.58, 4.72, 4.54, 4.65, 4.54, 4.75, 4.64, 4.57, 4.73, 4.64, null], "Ra'anana": [4.54, 4.74, 4.68, 4.7, 4.71, 4.72, 4.69, 4.71, 4.73, 4.64, 4.61, 4.65, 4.62, 4.62, 4.63, 4.64, 4.64, 4.65, 4.6, 4.64, 4.66, 4.45, 4.53, null], "Petah Tikva": [4.77, 4.78, 4.75, 4.81, 4.68, 4.68, 4.73, 4.73, 4.76, 4.7, 4.72, 4.71, 4.74, 4.61, 4.72, 4.64, 4.62, 4.66, 4.54, 4.54, 4.64, 4.41, 4.54, null], "Kiryat Ono": [4.67, 4.68, 4.76, 4.7, 4.79, 4.85, 4.72, 4.69, 4.76, 4.79, 4.65, 4.84, 4.74, 4.82, 4.52, 4.78, 4.6, 4.65, 4.58, 4.55, 4.6, 4.71, 4.58, null], "Kfar Saba": [4.73, 4.7, 4.68, 4.72, 4.61, 4.64, 4.48, 4.64, 4.77, 4.71, 4.65, 4.66, 4.75, 4.72, 4.64, 4.68, 4.6, 4.71, 4.58, 4.59, 4.61, 4.53, 4.57, null], "Rehovot": [4.77, 4.58, 4.68, 4.67, 4.67, 4.77, 4.69, 4.72, 4.7, 4.78, 4.69, 4.71, 4.84, 4.74, 4.51, 4.68, 4.59, 4.58, 4.7, 4.6, 4.51, 4.59, 4.48, null], "Yad Eliyahu": [4.7, 4.69, 4.76, 4.78, 4.73, 4.8, 4.72, 4.69, 4.78, 4.75, 4.64, 4.62, 4.71, 4.58, 4.65, 4.6, 4.58, 4.69, 4.47, 4.48, 4.67, 4.52, 4.6, null], "Bialik": [4.48, 4.63, 4.66, 4.6, 4.53, 4.68, 4.54, 4.49, 4.71, 4.6, 4.63, 4.74, 4.57, 4.56, 4.55, 4.53, 4.57, 4.46, 4.37, 4.4, 4.62, 4.55, 4.56, null], "Neot Shamir": [4.71, 4.88, 4.83, 4.72, 4.46, 4.7, 4.76, 4.63, 4.57, 4.7, 4.58, 4.6, 4.69, 4.77, 4.67, 4.49, 4.57, 4.64, 4.63, 4.5, 4.72, 4.59, 4.58, null], "Cinema City": [4.67, 4.58, 4.75, 4.76, 4.73, 4.72, 4.56, 4.44, 4.61, 4.6, 4.7, 4.64, 4.76, 4.61, 4.75, 4.64, 4.56, 4.58, 4.6, 4.51, 4.64, 4.44, 4.59, null], "Ashdod": [4.58, 4.7, 4.65, 4.68, 4.64, 4.75, 4.72, 4.69, 4.77, 4.73, 4.74, 4.69, 4.54, 4.48, 4.49, 4.63, 4.55, 4.66, 4.62, 4.53, 4.47, 4.61, 4.68, null], "Modi'in": [4.7, 4.46, 4.57, 4.78, 4.7, 4.56, 4.61, 4.66, 4.74, 4.54, 4.64, 4.55, 4.72, 4.63, 4.73, 4.65, 4.54, 4.6, 4.43, 4.6, 4.59, 4.58, 4.39, null], "Be'er Sheva": [4.65, 4.52, 4.76, 4.64, 4.6, 4.56, 4.68, 4.7, 4.62, 4.78, 4.63, 4.68, 4.71, 4.68, 4.71, 4.71, 4.52, 4.6, 4.57, 4.51, 4.59, 4.54, 4.37, null], "Jerusalem Talpiot": [4.6, 4.58, 4.66, 4.82, 4.55, 4.8, 4.66, 4.58, 4.57, 4.59, 4.59, 4.53, 4.55, 4.63, 4.64, 4.52, 4.52, 4.57, 4.35, 4.34, 4.33, 4.46, 4.4, null], "Ben Yehuda": [4.6, 4.59, 4.59, 4.73, 4.64, 4.55, 4.54, 4.72, 4.78, 4.62, 4.68, 4.72, 4.66, 4.57, 4.52, 4.42, 4.51, 4.4, 4.43, 4.45, 4.51, 4.56, 4.39, null], "Or Yehuda": [4.38, 4.79, 4.53, 4.81, 4.75, 4.67, 4.74, 4.47, 4.56, 4.69, 4.66, 4.51, 4.52, 4.61, 4.55, 4.59, 4.49, 4.7, 4.62, 4.51, 4.38, 4.3, 4.61, null]}, "store_settlements": {"Ashdod": [3727.0, 7094.0, 3865.0, 6703.0, 7574.0, 4092.0, 4143.0, 4076.0, 3958.0, 1895.0, 1541.0, 1677.0, 1667.0, 3030.0, 9540.0, 6198.0, 4149.0, 3679.0, 7342.0, null, 11414.0, 5483.0, 9124.0, null], "Ashkelon": [2376.0, 2814.0, 564.0, 1381.0, 770.0, 3182.0, 1378.0, 2196.0, 697.0, 929.0, 809.0, 589.0, 1213.0, 853.0, 2625.0, 3533.0, 2671.0, 3675.0, 5818.0, null, 9185.0, 1863.0, 10579.0, null], "Be'er Sheva": [1739.0, 2055.0, 1889.0, 3134.0, 1796.0, 3894.0, 1960.0, 1354.0, 2275.0, 1090.0, 1040.0, 1025.0, 1430.0, 1785.0, 2465.0, 3726.0, 3923.0, 2708.0, 6413.0, null, 3961.0, 2925.0, 3245.0, null], "Ben Yehuda": [4671.0, 12087.0, 9785.0, 11231.0, 4989.0, 3733.0, 4592.0, 5951.0, 4786.0, 2829.0, 3632.0, 2518.0, 1799.0, 3689.0, 9005.0, 9492.0, 9020.0, 13816.0, 18296.0, null, 14128.0, 13899.0, 9052.0, null], "Bialik": [0.0, 0.0, 0.0, 0.0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "Cinema City": [2360.0, 2616.0, 968.0, 1656.0, 722.0, 1925.0, 2196.0, 2091.0, 3424.0, 1484.0, 1557.0, 955.0, 1223.0, 1211.0, 3405.0, 2937.0, 2810.0, 3466.0, 3162.0, null, 2546.0, 3342.0, 3144.0, null], "Florentine": [9831.0, 10768.0, 4524.0, 6102.0, 4668.0, 7460.0, 4758.0, 5196.0, 5095.0, 2328.0, 6165.0, 3469.0, 1918.0, 5040.0, 5673.0, 5382.0, 4152.0, 4486.0, 6193.0, null, 6410.0, 5116.0, 5516.0, null], "HaRova": [9974.0, 12537.0, 7384.0, 7981.0, 5543.0, 3672.0, 2569.0, 4918.0, 3431.0, 1876.0, 1748.0, 1502.0, 2007.0, 2056.0, 11584.0, 11882.0, 5790.0, 5991.0, 9878.0, null, 15094.0, 5672.0, 6912.0, null], "Herzliya": [4418.0, 5059.0, 3716.0, 6504.0, 3274.0, 4916.0, 6148.0, 6104.0, 6316.0, 3432.0, 3885.0, 3015.0, 3930.0, 3643.0, 6212.0, 4171.0, 5479.0, 6966.0, 7853.0, null, 7453.0, 5522.0, 6957.0, null], "Jerusalem Talpiot": [3838.0, 4214.0, 3149.0, 5018.0, 3624.0, 3227.0, 3647.0, 3759.0, 6863.0, 4709.0, 3590.0, 3274.0, 2595.0, 2667.0, 11654.0, 8950.0, 9269.0, 5667.0, 5455.0, null, 6404.0, 4638.0, 3916.0, null], "Kfar Saba": [2843.0, 2407.0, 1724.0, 3128.0, 1294.0, 1510.0, 2903.0, 2173.0, 3415.0, 1378.0, 1744.0, 1120.0, 1404.0, 1728.0, 2367.0, 2614.0, 2113.0, 3167.0, 2807.0, null, 6059.0, 3690.0, 3374.0, null], "Kiryat Eliezer": [672.0, 2160.0, 2156.0, 3084.0, 1662.0, 2650.0, 1920.0, 2355.0, 3605.0, 827.0, 1366.0, 907.0, 1099.0, 1868.0, 1995.0, 1285.0, 1761.0, 3147.0, 1917.0, null, 2021.0, 2833.0, 2905.0, null], "Kiryat Ono": [2995.0, 3292.0, 1927.0, 5527.0, 1579.0, 2344.0, 2497.0, 3091.0, 4125.0, 1839.0, 3757.0, 1533.0, 1623.0, 1006.0, 2812.0, 2977.0, 2437.0, 4312.0, 4237.0, null, 4791.0, 2701.0, 3999.0, null], "Kiryon": [660.0, 1509.0, 1074.0, 1190.0, 1781.0, 1511.0, 1731.0, 2370.0, 1906.0, 1439.0, 1311.0, 1074.0, 1545.0, 1371.0, 1530.0, 2588.0, 2047.0, 2127.0, 1808.0, null, 2980.0, 2962.0, 3583.0, null], "Lev Haaretz": [1067.0, 2302.0, 1296.0, 1890.0, 1142.0, 2025.0, 1673.0, 2045.0, 3444.0, 1439.0, 1647.0, 1939.0, 1250.0, 2171.0, 5831.0, 6772.0, 3120.0, 2396.0, 1902.0, null, 8465.0, 6548.0, 5305.0, null], "Modi'in": [2901.0, 1447.0, 3038.0, 1454.0, 1931.0, 1557.0, 1641.0, 977.0, 2415.0, 1273.0, 2176.0, 1959.0, 1124.0, 1381.0, 2387.0, 4007.0, 3320.0, 3046.0, 2264.0, null, 4466.0, 1645.0, 4311.0, null], "Neot Shamir": [1642.0, 2403.0, 1068.0, 1502.0, 1097.0, 4180.0, 941.0, 2657.0, 1606.0, 974.0, 2308.0, 1017.0, 650.0, 962.0, 2069.0, 2613.0, 2209.0, 2469.0, 2355.0, null, 5234.0, 1365.0, 2755.0, null], "Ness Ziona": [879.0, 1314.0, 711.0, 957.0, 853.0, 1037.0, 994.0, 860.0, 1714.0, 711.0, 1010.0, 1125.0, 891.0, 1594.0, 1523.0, 1575.0, 1345.0, 1826.0, 3527.0, null, 4091.0, 2446.0, 2516.0, null], "Netanya Center": [2625.0, 3083.0, 2373.0, 2467.0, 1085.0, 1853.0, 1101.0, 1667.0, 2874.0, 2796.0, 1295.0, 1302.0, 1276.0, 2072.0, 4858.0, 3412.0, 2160.0, 3591.0, 2690.0, null, 5170.0, 3314.0, 4995.0, null], "Netanya Poleg": [1932.0, 2549.0, 1949.0, 1755.0, 1318.0, 2752.0, 1474.0, 1555.0, 2627.0, 1960.0, 1830.0, 943.0, 2164.0, 1806.0, 1761.0, 2345.0, 2302.0, 3022.0, 2809.0, null, 2921.0, 3090.0, 3692.0, null], "Or Yehuda": [1764.0, 1604.0, 848.0, 1278.0, 853.0, 887.0, 1734.0, 1677.0, 1576.0, 937.0, 1297.0, 931.0, 1137.0, 905.0, 3602.0, 1455.0, 3669.0, 2189.0, 2874.0, null, 4493.0, 1739.0, 2993.0, null], "Petah Tikva": [2477.0, 2995.0, 2314.0, 1849.0, 2563.0, 5171.0, 3581.0, 4101.0, 4914.0, 2066.0, 1527.0, 1061.0, 2412.0, 2808.0, 3145.0, 4958.0, 6305.0, 3344.0, 3065.0, null, 9308.0, 10714.0, 10075.0, null], "Ra'anana": [1876.0, 2862.0, 2597.0, 3651.0, 2182.0, 2159.0, 2649.0, 3712.0, 3550.0, 2719.0, 4084.0, 2676.0, 3941.0, 3047.0, 3109.0, 3319.0, 3258.0, 2744.0, 4386.0, null, 4058.0, 3308.0, 4279.0, null], "Ramat Hasharon": [1923.0, 2064.0, 2155.0, 1980.0, 1791.0, 2237.0, 2095.0, 3195.0, 2231.0, 2224.0, 962.0, 1323.0, 798.0, 2379.0, 2322.0, 3005.0, 2119.0, 3539.0, 2510.0, null, 3100.0, 3196.0, 2836.0, null], "Rehovot": [1533.0, 1989.0, 2196.0, 2118.0, 1679.0, 1465.0, 2495.0, 1641.0, 1553.0, 1529.0, 1625.0, 662.0, 1656.0, 715.0, 3384.0, 3515.0, 2022.0, 1810.0, 2201.0, null, 4304.0, 2281.0, 6306.0, null], "Rishon Maarav": [2071.0, 5432.0, 3671.0, 2625.0, 2166.0, 2313.0, 2204.0, 4632.0, 2463.0, 1804.0, 1857.0, 2053.0, 968.0, 2684.0, 3415.0, 2679.0, 2647.0, 3612.0, 4796.0, null, 9297.0, 4705.0, 5884.0, null], "Top Dan": [6459.0, 11279.0, 3591.0, 4914.0, 1989.0, 3982.0, 4165.0, 3747.0, 5441.0, 1017.0, 1959.0, 1979.0, 3135.0, 2081.0, 3799.0, 4527.0, 4342.0, 4215.0, 3752.0, null, 7925.0, 4941.0, 8676.0, null], "Wolfson": [2155.0, 4083.0, 2077.0, 2717.0, 1939.0, 2789.0, 1778.0, 3112.0, 1323.0, 842.0, 2370.0, 2360.0, 1628.0, 2896.0, 3515.0, 2949.0, 2563.0, 2688.0, 3489.0, null, 4372.0, 2594.0, 3881.0, null], "Yad Eliyahu": [4707.0, 2358.0, 2279.0, 3913.0, 2413.0, 2208.0, 3366.0, 3615.0, 2656.0, 2427.0, 1454.0, 949.0, 1669.0, 3634.0, 5088.0, 4541.0, 3801.0, 5657.0, 4226.0, null, 4835.0, 3484.0, 3576.0, null]}, "store_pofr": {"Neot Shamir": [93.0, 95.8, 94.3, 93.3, 90.7, 94.1, 90.2, 93.0, 82.6, 87.2, 86.5, 89.0, 91.4, 95.5, 94.9, 93.1, 94.1, 95.4, 91.5, 88.0, 93.3, 95.5, 74.4, null], "Kiryat Eliezer": [94.5, 91.1, 94.2, 93.1, 93.7, 93.4, 92.7, 90.0, 95.4, 96.1, 87.2, 95.2, 94.8, 95.2, 95.6, 96.2, 95.9, 94.7, 94.0, 93.9, 95.1, 94.0, 79.1, null], "Kiryon": [94.0, 93.4, 94.2, 94.2, 95.3, 94.3, 94.6, 88.9, 94.0, 95.1, 87.4, 94.2, 89.9, 95.1, 94.7, 95.5, 96.3, 94.8, 95.0, 90.8, 94.6, 94.3, 81.8, null], "Petah Tikva": [94.9, 94.3, 94.3, 94.7, 92.6, 92.6, 89.2, 87.7, 88.5, 88.1, 92.1, 89.6, 79.6, 94.9, 94.7, 92.7, 92.0, 93.5, 91.5, 89.1, 89.9, 88.8, 76.4, null], "Ness Ziona": [97.1, 95.5, 95.9, 96.3, 96.6, 95.2, 96.5, 91.6, 93.0, 93.5, 90.0, 94.7, 95.5, 94.4, 95.7, 95.2, 95.4, 94.5, 94.4, 92.6, 93.9, 94.1, 82.3, null], "Ramat Hasharon": [92.6, 93.1, 94.7, 91.4, 91.2, 93.4, 92.4, 88.3, 91.4, 93.6, 92.7, 92.3, 89.4, 94.0, 94.2, 93.5, 92.6, 94.3, 93.2, 91.2, 93.2, 94.6, 80.3, null], "Be'er Sheva": [95.9, 94.3, 95.3, 96.1, 95.1, 95.5, 96.5, 93.7, 93.5, 96.2, 91.9, 93.3, 92.2, 93.9, 91.2, 93.8, 91.5, 92.8, 92.8, 91.7, 93.0, 93.5, 77.7, null], "Rishon Maarav": [93.9, 91.4, 93.2, 94.1, 93.1, 93.7, 91.7, 90.3, 91.4, 93.2, 90.0, 92.3, 93.0, 93.8, 93.6, 93.2, 92.3, 93.1, 91.6, 89.8, 91.4, 92.1, 75.5, null], "Or Yehuda": [95.0, 95.9, 95.5, 94.7, 94.4, 93.4, 94.2, 86.4, 88.0, 89.7, 91.6, 89.6, 91.5, 93.3, 91.0, 90.7, 92.7, 91.7, 90.1, 89.5, 92.8, 93.0, 80.1, null], "Wolfson": [94.1, 93.2, 95.7, 95.1, 94.6, 94.6, 94.7, 90.3, 90.2, 92.6, 85.5, 91.3, 86.4, 93.3, 93.7, 93.0, 94.6, 94.1, 93.0, 92.5, 93.9, 94.1, 81.3, null], "Netanya Poleg": [90.8, 90.2, 91.8, 93.4, 92.7, 91.1, 93.3, 88.7, 93.0, 93.6, 91.5, 91.8, 88.6, 92.9, 91.2, 91.9, 92.7, 89.8, 91.6, 89.9, 91.1, 91.8, 76.5, null], "Ben Yehuda": [91.4, 88.3, 90.2, 91.4, 92.7, 91.2, 89.1, 88.2, 91.1, 90.1, 94.4, 89.6, 94.6, 92.4, 88.8, 90.5, 88.9, 87.3, 86.0, 85.4, 89.0, 90.0, 74.8, null], "Ra'anana": [91.4, 92.2, 92.8, 94.3, 92.7, 94.3, 92.6, 92.6, 94.3, 94.1, 92.2, 94.3, 91.7, 92.1, 92.9, 94.3, 92.0, 94.7, 93.8, 93.6, 92.6, 92.4, 79.1, null], "Kfar Saba": [92.0, 89.2, 89.6, 91.3, 90.3, 92.3, 90.4, 85.5, 87.2, 87.9, 87.5, 86.9, 89.5, 91.8, 91.7, 91.1, 87.0, 90.5, 88.7, 88.6, 90.6, 91.0, 74.4, null], "Top Dan": [85.5, 85.5, 89.0, 89.6, 89.8, 93.2, 90.3, 83.6, 86.2, 88.6, 91.9, 90.8, 95.2, 91.4, 92.0, 92.1, 92.5, 90.8, 90.6, 90.1, 90.7, 89.5, 79.8, null], "Rehovot": [91.6, 90.9, 94.4, 93.2, 93.8, 93.6, 91.3, 90.0, 85.9, 89.3, 90.9, 89.4, 89.9, 91.3, 89.6, 91.2, 88.5, 91.3, 88.8, 90.0, 91.2, 88.8, 75.4, null], "Yad Eliyahu": [92.5, 93.2, 93.7, 92.8, 90.4, 93.6, 91.5, 88.4, 91.1, 91.1, 91.6, 92.8, 91.3, 91.1, 92.4, 91.2, 92.5, 92.3, 92.6, 89.5, 91.5, 92.7, 78.4, null], "Florentine": [88.3, 89.7, 92.5, 92.7, 86.7, 89.6, 88.8, 88.5, 89.0, 92.8, 88.5, 91.3, 92.4, 91.1, 91.4, 92.3, 93.4, 92.1, 91.1, 89.9, 93.8, 91.5, 80.1, null]}, "store_uptime": {"Kiryon": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 97.8, 97.4], "Kiryat Eliezer": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.8, 98.6], "Wolfson": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.8, 97.3], "Ramat Hasharon": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.2, 98.9], "Rishon Maarav": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 96.9, 96.0], "Netanya Center": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.3, 97.8], "Netanya Poleg": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.1, 98.6], "Top Dan": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 96.8, 95.9], "Ashkelon": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 96.5, 90.5], "Florentine": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.4, 97.7], "HaRova": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.7, 98.4], "Herzliya": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.5, 98.3], "Lev Haaretz": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.3, 99.1], "Ness Ziona": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.2, 99.0], "Ra'anana": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.0, 98.7], "Petah Tikva": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.4, 98.1], "Kiryat Ono": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.0, 97.6], "Kfar Saba": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.5, 98.2], "Modi'in": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 97.5, 97.2], "Neot Shamir": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 100.0, 94.0], "Ben Yehuda": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 96.3, 91.5], "Cinema City": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.1, 97.9], "Or Yehuda": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.6, 98.3], "Rehovot": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 97.8, 95.7], "Be'er Sheva": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 96.4, 92.7], "Jerusalem Talpiot": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 97.2, 95.6], "Ashdod": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.5, 99.3], "Yad Eliyahu": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 98.8, 98.5], "Bialik": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 99.2, 99.1], "HaNasi": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 97.8, 97.5]}};
+
+const WEEKS = RAW.weeks;
+const MARKET = RAW.market;
+const SR = RAW.store_ratings;
+const SS = RAW.store_settlements;
+const SP = RAW.store_pofr;
+const SU = RAW.store_uptime;
+
+// Find last non-null index for orders (most recent complete week)
+let defaultWeekIdx = WEEKS.length - 2; // 8-Jun
+for (let i = WEEKS.length - 1; i >= 0; i--) {
+  if (MARKET.orders[i] !== null) { defaultWeekIdx = i; break; }
+}
+let currentWeekIdx = defaultWeekIdx;
+
+// Init slider
+const slider = document.getElementById('week-slider');
+slider.max = WEEKS.length - 1;
+slider.value = currentWeekIdx;
+document.getElementById('week-first-label').textContent = WEEKS[0];
+document.getElementById('week-last-label').textContent = WEEKS[WEEKS.length - 1];
+
+// Grid.js table instance
+let gridInstance = null;
+
+function fmt(v, decimals=0) {
+  if (v === null || v === undefined) return null;
+  return parseFloat(v.toFixed(decimals));
+}
+
+function fmtNum(v) {
+  if (v === null || v === undefined) return '—';
+  return Math.round(v).toLocaleString();
+}
+
+function fmtK(v) {
+  if (v === null || v === undefined) return '—';
+  if (v >= 1000) return '₪' + (v/1000).toFixed(0) + 'K';
+  return '₪' + Math.round(v);
+}
+
+function wowColor(diff, isSettlement) {
+  if (diff === null || diff === undefined) return 'neu';
+  if (isSettlement) return diff >= 0 ? 'up' : 'down';
+  return diff > 0.005 ? 'up' : diff < -0.005 ? 'down' : 'neu';
+}
+
+function wowText(diff, curr, prev, isSettlement, isPct) {
+  if (diff === null || prev === null || prev === undefined) return '—';
+  const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '—';
+  if (isSettlement) {
+    const pct = prev !== 0 ? ((diff / prev) * 100).toFixed(0) + '%' : '';
+    return `${arrow} ₪${Math.abs(Math.round(diff)).toLocaleString()} ${pct}`;
+  }
+  if (isPct) return `${arrow} ${Math.abs(diff).toFixed(1)}`;
+  return `${arrow} ${Math.abs(diff).toFixed(2)} WoW`;
+}
+
+function metricCell(id, value, diff, label, format, isPct, isSettlement, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const color = diff === null ? 'neu' : wowColor(diff, isSettlement);
+  let valStr = '—';
+  if (value !== null && value !== undefined) {
+    if (isSettlement) valStr = fmtK(value);
+    else if (format === 'orders') valStr = fmtNum(value);
+    else if (isPct) valStr = value.toFixed(1) + '%';
+    else valStr = value.toFixed(2);
+  }
+  const wowStr = wowText(diff, value, value - (diff||0), isSettlement, isPct);
+  const targetHtml = target ? `<div class="metric-target">${target}</div>` : '';
+  el.innerHTML = `<div class="metric-value">${valStr}</div><div class="metric-wow ${color}">${wowStr}</div>${targetHtml}<div class="metric-name">${label}</div>`;
+}
+
+function avgUptime(wi) {
+  const vals = Object.values(SU).map(v => v[wi]).filter(v => v !== null && v !== undefined);
+  if (!vals.length) return null;
+  return vals.reduce((a,b) => a+b, 0) / vals.length;
+}
+
+function updateMarketNumbers(wi) {
+  const prev = wi > 0 ? wi - 1 : null;
+  const get = (m, i) => (i !== null && MARKET[m] && MARKET[m][i] !== null) ? MARKET[m][i] : null;
+  const diff = (m, i) => {
+    const c = get(m, i), p = i > 0 ? get(m, i-1) : null;
+    return (c !== null && p !== null) ? c - p : null;
+  };
+
+  const orders = get('orders', wi);
+  const rating = get('rating', wi);
+  const pofr   = get('pofr', wi);
+  const sett   = get('settlements', wi);
+  const ut     = avgUptime(wi);
+  const utPrev = wi > 0 ? avgUptime(wi-1) : null;
+
+  metricCell('mc-orders',      orders, diff('orders', wi),      'Orders',      'orders', false, false);
+  metricCell('mc-rating',      rating, diff('rating', wi),      'Avg Rating',  'dec2',   false, false, 'Target 4.70');
+  metricCell('mc-pofr',        pofr,   diff('pofr', wi),        'Avg POFR',    'pct',    true,  false, 'Target 95.2%');
+  metricCell('mc-settlements', sett,   diff('settlements', wi), 'Settlements', 'sett',   false, true);
+  
+  // Uptime
+  const utDiff = (ut !== null && utPrev !== null) ? ut - utPrev : null;
+  const utColor = utDiff === null ? 'neu' : utDiff >= -0.5 ? 'up' : utDiff >= -2 ? 'warn' : 'down';
+  const utWow = utDiff !== null ? `${utDiff >= 0 ? '▲' : '▼'} ${Math.abs(utDiff).toFixed(1)} WoW` : '—';
+  const utEl = document.getElementById('mc-uptime');
+  if (utEl) {
+    const utStr = ut !== null ? ut.toFixed(1) + '%' : '—';
+    utEl.innerHTML = `<div class="metric-value">${utStr}</div><div class="metric-wow ${utColor}">${utWow}</div><div class="metric-name">Up-Time</div>`;
+  }
+
+  // POFR notice
+  const noticeEl = document.getElementById('pofr-notice');
+  if (pofr !== null && pofr < 85) {
+    noticeEl.style.display = '';
+    noticeEl.textContent = `⚠️  POFR ${WEEKS[wi]} (${pofr.toFixed(1)}%) — sharp drop vs ${wi > 0 ? WEEKS[wi-1] : 'prior week'}. Likely data finalization lag; verify before actioning.`;
+  } else {
+    noticeEl.style.display = 'none';
+  }
+}
+
+function buildMoversHtml(items, isUp, isSettlement) {
+  const color = isUp ? 'up' : 'down';
+  const arrow = isUp ? '↑' : '↓';
+  const title = isSettlement ? (isUp ? 'Settlement Up' : 'Settlement Down') : (isUp ? 'Rating Up' : 'Rating Down');
+  let html = `<div><div class="movers-col-label ${color}">${arrow} ${title}</div>`;
+  items.forEach(it => {
+    const deltaStr = isSettlement
+      ? `${isUp ? '+' : '−'}₪${Math.abs(Math.round(it.delta)).toLocaleString()}`
+      : `${isUp ? '+' : '−'}${Math.abs(it.delta).toFixed(2)}`;
+    const pctStr = isSettlement
+      ? (it.pct !== null ? (isUp ? '+' : '−') + Math.abs(it.pct).toFixed(0) + '%' : '')
+      : `${it.prev.toFixed(2)}→${it.curr.toFixed(2)}`;
+    html += `<div class="mover-row"><span class="mover-name">${it.name}</span><span class="mover-delta ${color}">${deltaStr}</span><span class="mover-pct">${pctStr}</span></div>`;
+  });
+  if (!items.length) html += `<div style="color:#8e8e93;font-size:12px;padding:8px 0">No data</div>`;
+  html += '</div>';
+  return html;
+}
+
+function updateMovers(wi, type) {
+  const src = type === 'settlement' ? SS : SR;
+  const items = [];
+  Object.keys(src).forEach(store => {
+    const curr = src[store][wi];
+    const prev = wi > 0 ? src[store][wi - 1] : null;
+    if (curr === null || prev === null) return;
+    const delta = curr - prev;
+    const pct = prev !== 0 ? (delta / Math.abs(prev)) * 100 : null;
+    items.push({ name: store, curr, prev, delta, pct });
+  });
+  items.sort((a, b) => b.delta - a.delta);
+  const up   = items.filter(i => i.delta > 0).slice(0, 5);
+  const down = items.filter(i => i.delta < 0).reverse().slice(0, 5);
+  const isS = type === 'settlement';
+  document.getElementById('movers-' + type).innerHTML = `<div class="movers-grid">${buildMoversHtml(up, true, isS)}${buildMoversHtml(down, false, isS)}</div>`;
+}
+
+let activeMovers = 'settlement';
+function showMovers(type) {
+  activeMovers = type;
+  document.getElementById('movers-settlement').style.display = type === 'settlement' ? '' : 'none';
+  document.getElementById('movers-rating').style.display = type === 'rating' ? '' : 'none';
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && type === 'settlement') || (i === 1 && type === 'rating'));
+  });
+  updateMovers(currentWeekIdx, type);
+}
+
+function ratingBadge(v, diff) {
+  if (v === null || v === undefined) return '<span class="badge b-gray">—</span>';
+  const cls = v >= 4.70 ? 'b-green' : v >= 4.50 ? 'b-orange' : 'b-red';
+  let delta = '';
+  if (diff !== null && diff !== undefined) {
+    const c = diff > 0.005 ? '#34c759' : diff < -0.005 ? '#ff3b30' : '#8e8e93';
+    const a = diff > 0.005 ? '▲' : diff < -0.005 ? '▼' : '';
+    delta = `<span style="font-size:10px;color:${c};margin-left:3px">${a}${Math.abs(diff).toFixed(2)}</span>`;
+  }
+  return `<span class="badge ${cls}">${v.toFixed(2)}</span>${delta}`;
+}
+
+function settlBadge(v, diff) {
+  if (v === null || v === undefined) return '—';
+  const str = '₪' + Math.round(v).toLocaleString();
+  if (diff === null) return str;
+  const c = diff > 0 ? '#34c759' : diff < 0 ? '#ff3b30' : '#8e8e93';
+  const a = diff > 0 ? '▲' : '▼';
+  return `${str}<br><span style="font-size:10px;color:${c}">${a} ₪${Math.abs(Math.round(diff)).toLocaleString()}</span>`;
+}
+
+function pofrBadge(v, diff) {
+  if (v === null || v === undefined) return '<span style="color:#8e8e93">—</span>';
+  const c = v >= 95 ? '#34c759' : v >= 90 ? '#ff9500' : '#ff3b30';
+  const str = `<span style="color:${c}">${v.toFixed(1)}%</span>`;
+  if (diff === null) return str;
+  const dc = diff >= 0 ? '#34c759' : '#ff3b30';
+  return `${str}<br><span style="font-size:10px;color:${dc}">${diff >= 0 ? '▲' : '▼'}${Math.abs(diff).toFixed(1)}</span>`;
+}
+
+function utimeBadge(v, diff) {
+  if (v === null || v === undefined) return '—';
+  const c = v >= 97 ? '#34c759' : v >= 94 ? '#ff9500' : '#ff3b30';
+  const str = `<span style="color:${c}">${v.toFixed(1)}%</span>`;
+  if (diff === null) return str;
+  const dc = diff >= -0.5 ? '#34c759' : diff >= -2 ? '#ff9500' : '#ff3b30';
+  return `${str}<br><span style="font-size:10px;color:${dc}">${diff >= 0 ? '' : '▼'}${Math.abs(diff).toFixed(1)}</span>`;
+}
+
+function updateTable(wi) {
+  const allStores = [...new Set([...Object.keys(SR), ...Object.keys(SS)])].sort();
+  const data = allStores.map(s => {
+    const rc = SR[s] ? SR[s][wi] : null;
+    const rp = (SR[s] && wi > 0) ? SR[s][wi-1] : null;
+    const sc = SS[s] ? SS[s][wi] : null;
+    const sp2 = (SS[s] && wi > 0) ? SS[s][wi-1] : null;
+    const pc = SP[s] ? SP[s][wi] : null;
+    const pp = (SP[s] && wi > 0) ? SP[s][wi-1] : null;
+    const uc = SU[s] ? SU[s][wi] : null;
+    const up = (SU[s] && wi > 0) ? SU[s][wi-1] : null;
+    return [
+      s,
+      gridjs.html(ratingBadge(rc, rc !== null && rp !== null ? rc - rp : null)),
+      gridjs.html(settlBadge(sc, sc !== null && sp2 !== null ? sc - sp2 : null)),
+      gridjs.html(pofrBadge(pc, pc !== null && pp !== null ? pc - pp : null)),
+      gridjs.html(utimeBadge(uc, uc !== null && up !== null ? uc - up : null)),
+    ];
+  });
+
+  if (gridInstance) {
+    gridInstance.updateConfig({ data }).forceRender();
+  } else {
+    gridInstance = new gridjs.Grid({
+      columns: [
+        { name: 'Store', width: '170px' },
+        { name: 'Rating', width: '110px' },
+        { name: 'Settlements', width: '120px' },
+        { name: 'POFR', width: '85px' },
+        { name: 'Up-Time', width: '85px' },
+      ],
+      data,
+      search: true,
+      sort: true,
+      pagination: { limit: 15 },
+    }).render(document.getElementById('store-table'));
+  }
+}
+
+function setWeek(idx) {
+  if (idx < 0) idx = 0;
+  if (idx >= WEEKS.length) idx = WEEKS.length - 1;
+  currentWeekIdx = idx;
+  slider.value = idx;
+  document.getElementById('week-current-label').textContent = WEEKS[idx];
+  document.getElementById('week-compare-label').textContent = idx > 0 ? `vs ${WEEKS[idx-1]}` : 'First week — no prior comparison';
+  document.getElementById('header-sub').textContent = `${WEEKS[idx]} · 30 stores · Compared to ${idx > 0 ? WEEKS[idx-1] : '—'}`;
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = idx === WEEKS.length - 1;
+  updateMarketNumbers(idx);
+  updateMovers(idx, 'settlement');
+  updateMovers(idx, 'rating');
+  if (activeMovers !== 'settlement') showMovers(activeMovers);
+  updateTable(idx);
+}
+
+function changeWeek(delta) { setWeek(currentWeekIdx + delta); }
+
+// Init
+setWeek(currentWeekIdx);
+</script>
+</body>
+</html>
