@@ -3,366 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wolt Market IL — CX Dashboard | W/E June 14, 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Wolt Market IL — CX Dashboard W/E June 22, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f2f3f7;--card:#fff;--border:#e5e7eb;--txt:#111827;--muted:#6b7280;--dim:#9ca3af;
-  --green:#16a34a;--red:#dc2626;--amber:#d97706;--blue:#2563eb;--purple:#7c3aed;
-  --green-bg:#dcfce7;--red-bg:#fee2e2;--amber-bg:#fef3c7;--blue-bg:#dbeafe;
-}
-body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:var(--txt);direction:ltr;-webkit-font-smoothing:antialiased;min-height:100vh}
-.page{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
-
-/* Nav */
-.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-.nav-brand{display:flex;align-items:center;gap:10px}
-.nav-logo{width:36px;height:36px;background:#009de0;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
-.nav-title{font-size:20px;font-weight:800;color:var(--txt)}
-.nav-sub{font-size:12px;color:var(--dim);font-weight:500;margin-top:1px}
-.nav-badge{background:#e0f2fe;color:#0284c7;border-radius:8px;padding:5px 12px;font-size:11.5px;font-weight:700}
-
-/* KPI row */
+:root{--green:#16a34a;--red:#dc2626;--amber:#d97706;--blue:#009de0;--bg:#f2f3f7;--card:#fff;--border:#e5e7eb;--muted:#6b7280;--dim:#9ca3af}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'Nunito',-apple-system,sans-serif;color:#111;min-height:100vh}
+.page{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+nav{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.logo{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
+.nav-title{font-size:17px;font-weight:800;color:#111}
+.nav-date{margin-left:auto;background:#fff;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--muted);box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px}
-.kpi{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.kpi-label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-.kpi-value{font-size:22px;font-weight:800;color:var(--txt)}
-.kpi-sub{font-size:11px;margin-top:3px;font-weight:600}
-.kpi-note{font-size:10.5px;color:var(--dim);margin-top:1px}
-.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--amber)}
-
-/* Charts row */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.chart-card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.chart-title{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:12px}
-
-/* Controls */
-.controls{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.search-box{flex:1;min-width:200px;padding:8px 14px;border:1px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;color:var(--txt);background:var(--card);outline:none;transition:border-color .15s}
-.search-box:focus{border-color:#93c5fd}
-.filter-btn{padding:7px 14px;border:1px solid var(--border);border-radius:9px;background:var(--card);font-family:inherit;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
-.filter-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
-.count-pill{background:var(--blue-bg);color:var(--blue);border-radius:20px;padding:2px 10px;font-size:11.5px;font-weight:700;margin-left:auto}
-
-/* Main table */
-.table-wrap{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
-.table-header{padding:14px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.table-header-title{font-size:13px;font-weight:700;color:var(--txt)}
-.table-header-sub{font-size:11px;color:var(--dim)}
-.table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{padding:9px 12px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;background:#f9fafb;text-align:center;border-bottom:1px solid #f3f4f6;white-space:nowrap;cursor:pointer;user-select:none;position:relative}
-th:first-child{text-align:left}
-th:hover{background:#f3f4f6;color:var(--txt)}
-th.sort-asc::after{content:' ↑';color:var(--blue)}
-th.sort-desc::after{content:' ↓';color:var(--blue)}
-td{padding:8px 12px;border-bottom:1px solid #f8f8fb;text-align:center;vertical-align:middle}
-td:first-child{text-align:left}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafafa}
-.venue-name{font-weight:600;color:var(--txt);white-space:nowrap}
-.risk-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle;margin-bottom:1px}
-.pill{border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700;display:inline-block;white-space:nowrap}
-.pill-green{background:var(--green-bg);color:var(--green)}
-.pill-amber{background:var(--amber-bg);color:var(--amber)}
-.pill-red{background:var(--red-bg);color:var(--red)}
-.wow-up{color:var(--green);font-size:10px;font-weight:700}
-.wow-down{color:var(--red);font-size:10px;font-weight:700}
-.wow-neutral{color:var(--dim);font-size:10px}
-.hidden{display:none!important}
-.no-results{text-align:center;padding:40px;color:var(--dim);font-size:13px}
-
-/* Complaints section */
-.section-label{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
-.complaint-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:20px}
-.complaint-card{background:var(--card);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.complaint-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.complaint-cat{font-size:12.5px;font-weight:700;color:var(--txt)}
-.complaint-venues{font-size:11.5px;color:var(--muted);line-height:1.6}
-
-/* Risk card */
-.risk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:10px}
-.risk-card{background:var(--card);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid var(--red)}
-.risk-name{font-weight:700;font-size:13px;color:var(--txt);margin-bottom:4px}
-.risk-metrics{font-size:11.5px;color:var(--muted);margin-bottom:5px}
-.risk-cx{font-size:11.5px;color:var(--dim);font-style:italic}
-
-/* Watch card */
-.watch-wrap{background:#fffbeb;border-left:3px solid #f59e0b;border-radius:10px;padding:14px 18px;margin-bottom:4px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.watch-label{font-size:10px;font-weight:700;color:#d97706;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
-.watch-item{font-size:12.5px;color:#374151;margin-bottom:6px}
-.watch-item:last-child{margin-bottom:0}
-
-/* Actions */
-.action-list{background:var(--card);border-radius:12px;padding:4px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.action-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #f8f8fb}
+.kpi{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.kpi-label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:800;color:#111;line-height:1}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:680px){.charts-row{grid-template-columns:1fr}}
+.chart-card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.chart-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.section-label{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.09em;text-transform:uppercase;margin:22px 0 10px;padding-top:18px;border-top:1px solid var(--border)}
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:4px}
+.risk-card{background:#fff;border-radius:12px;padding:14px 16px;border-left:3px solid var(--red);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.risk-name{font-size:13px;font-weight:800;color:#111;margin-bottom:4px}
+.risk-tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:10px;font-weight:700;background:#fef2f2;color:var(--red);border-radius:4px;padding:2px 7px}
+.watch-row{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06);background:#fffbeb;border-left:3px solid #f59e0b;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px}
+.watch-item{font-size:12px;font-weight:700;color:#92400e}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.search{flex:1;min-width:160px;padding:8px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;outline:none}
+.search:focus{border-color:var(--blue)}
+.filter-btn{padding:7px 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s}
+.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.count-pill{font-size:11px;font-weight:700;background:var(--blue);color:#fff;border-radius:12px;padding:2px 10px;margin-left:auto}
+.table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow-x:auto}
+table.scorecard{width:100%;border-collapse:collapse;min-width:580px}
+table.scorecard th{padding:10px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;background:#f9fafb;border-bottom:2px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+table.scorecard th:hover{color:#111}
+table.scorecard td{padding:9px 12px;font-size:12.5px;border-bottom:1px solid #f3f4f6}
+table.scorecard tr:last-child td{border-bottom:none}
+table.scorecard tr:hover td{background:#f9fafb}
+.dot-red{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle}
+.complaint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:4px}
+.complaint-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.comp-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.comp-pill{font-size:11px;font-weight:800;border-radius:20px;padding:2px 10px}
+.comp-cat{font-size:12.5px;font-weight:700;color:#111}
+.comp-venues{font-size:11px;color:var(--muted);line-height:1.5}
+.actions-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.action-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6}
 .action-item:last-child{border-bottom:none}
-.action-num{flex-shrink:0;width:22px;height:22px;background:#2563eb;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px}
-.action-body{flex:1}
-.action-title{font-size:12.5px;color:var(--txt)}
-.action-venues{font-size:11px;color:var(--dim);margin-top:3px}
-
-/* Footer */
-.footer{text-align:center;font-size:11px;color:#d1d5db;margin-top:40px;font-weight:500}
-
-@media(max-width:640px){
-  .charts-grid{grid-template-columns:1fr}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-}
+.action-num{min-width:26px;height:26px;background:#2563eb;color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.action-title{font-size:13px;font-weight:700;color:#111}
+.action-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
+.action-venues{font-size:11px;color:var(--dim);margin-top:2px;font-style:italic}
+footer{text-align:center;padding:32px 0 0;font-size:11px;color:var(--dim)}
+.alert-banner{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:14px 18px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.alert-icon{font-size:18px}
+.alert-title{font-size:13px;font-weight:800;color:var(--red);margin-bottom:3px}
+.alert-text{font-size:12px;color:#374151}
 </style>
 </head>
 <body>
 <div class="page">
 
-<!-- NAV -->
-<div class="nav">
-  <div class="nav-brand">
-    <div class="nav-logo">W</div>
-    <div>
-      <div class="nav-title">Wolt Market Israel &mdash; CX Dashboard</div>
-      <div class="nav-sub">Week of June 8, 2026 &nbsp;&middot;&nbsp; Compared to June 1, 2026</div>
-    </div>
+<nav>
+  <div class="logo">W</div>
+  <div>
+    <div class="nav-title">Wolt Market Israel</div>
+    <div style="font-size:11px;color:var(--muted)">CX Dashboard</div>
   </div>
-  <div class="nav-badge">W/E June 14, 2026</div>
-</div>
+  <div class="nav-date">W/E June 22, 2026</div>
+</nav>
 
-<!-- KPI ROW -->
+<!-- KPI GRID -->
 <div class="kpi-grid">
   <div class="kpi">
     <div class="kpi-label">Orders</div>
-    <div class="kpi-value">88K</div>
-    <div class="kpi-note">88,005 total</div>
+    <div class="kpi-val">86,896</div>
+    <div class="kpi-sub">Latest available</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">Goods Rating</div>
-    <div class="kpi-value warn">4.58</div>
-    <div class="kpi-note">Target &ge; 4.70</div>
+    <div class="kpi-val" style="color:var(--amber)">4.56</div>
+    <div class="kpi-sub" style="color:var(--red)">▼ 4.58 prev week</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">Avg Delivery</div>
-    <div class="kpi-value bad">51 <span style="font-size:14px;font-weight:600">min</span></div>
-    <div class="kpi-note">Target &le; 45 min</div>
+    <div class="kpi-val" style="color:var(--amber)">52 min</div>
+    <div class="kpi-sub" style="color:var(--red)">▼ 51m prev week</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">POFR</div>
-    <div class="kpi-value bad">78.1<span style="font-size:14px;font-weight:600">%</span></div>
-    <div class="kpi-note">Target &ge; 95%</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Rejection Rate</div>
-    <div class="kpi-value">0.615<span style="font-size:14px;font-weight:600">%</span></div>
-    <div class="kpi-sub good">&#9660; 7.2% WoW</div>
-    <div class="kpi-note">Prev: 0.663%</div>
+    <div class="kpi-val" style="color:var(--green)">89.6%</div>
+    <div class="kpi-sub" style="color:var(--green)">▲ +11.7pp vs 77.9%</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">Uptime</div>
-    <div class="kpi-value">97.0<span style="font-size:14px;font-weight:600">%</span></div>
-    <div class="kpi-sub bad">&#9660; 0.82pp WoW</div>
-    <div class="kpi-note">Prev: 97.8%</div>
+    <div class="kpi-val" style="color:var(--green)">97.16%</div>
+    <div class="kpi-sub">Latest available</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">Within 45 Min</div>
-    <div class="kpi-value warn">50.3<span style="font-size:14px;font-weight:600">%</span></div>
-    <div class="kpi-note">Of orders on time</div>
+    <div class="kpi-val" style="color:var(--amber)">51.6%</div>
+    <div class="kpi-sub">Market average</div>
   </div>
 </div>
 
 <!-- CHARTS -->
-<div class="charts-grid">
+<div class="charts-row">
   <div class="chart-card">
     <div class="chart-title">Goods Rating by Venue</div>
-    <canvas id="ratingsChart" height="200"></canvas>
+    <canvas id="ratingsChart" height="320"></canvas>
   </div>
   <div class="chart-card">
-    <div class="chart-title">Rejection Rate WoW &mdash; Biggest Movers</div>
-    <canvas id="rejChart" height="200"></canvas>
+    <div class="chart-title">Biggest WoW Movers (Goods Rating)</div>
+    <canvas id="moversChart" height="320"></canvas>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div class="alert-banner">
+  <div class="alert-icon">🚨</div>
+  <div>
+    <div class="alert-title">Florentine — Courier Safety Incident</div>
+    <div class="alert-text">Customer reported a courier allegedly attempted to physically attack them. Requires immediate escalation to courier operations and CS — independent of this week's goods rating (4.69).</div>
   </div>
 </div>
 
 <!-- HIGH RISK -->
-<div class="section-label">&#9679;&nbsp; High Risk Venues</div>
-<div class="risk-grid">
-  <div class="risk-card">
-    <div class="risk-name">Bialik</div>
-    <div class="risk-metrics">Rejection 0.99% (↓ from 2.09%) &middot; ADT 62 min &middot; POFR 77.9% &middot; 5,582 orders</div>
-    <div class="risk-cx">Courier no-show (1h+), 2.5h delays, CS unresponsive, cold chain breach</div>
-  </div>
-  <div class="risk-card">
-    <div class="risk-name">Petah Tikva</div>
-    <div class="risk-metrics">Goods 4.54 &middot; ADT 62 min &middot; POFR 76.4% &middot; Rejection 0.99%</div>
-    <div class="risk-cx">2h+ delays (repeat), missing items (2nd week), warm dairy, venue not answering CS</div>
-  </div>
-  <div class="risk-card">
-    <div class="risk-name">Rishon Maarav</div>
-    <div class="risk-metrics">Goods 4.33 (lowest) &middot; ADT 73 min (highest) &middot; POFR 75.5%</div>
-    <div class="risk-cx">3h wait / non-delivery, rotten produce, melted frozen items</div>
-  </div>
-  <div class="risk-card">
-    <div class="risk-name">Be'er Sheva</div>
-    <div class="risk-metrics">Rejection 1.20% (highest) &middot; ADT 55.7 min &middot; POFR 77.7%</div>
-    <div class="risk-cx">Highest rejection. 100% items substituted without customer call, freshness issues</div>
-  </div>
-</div>
+<div class="section-label">⚠ High Risk Venues</div>
+<div class="risk-grid" id="riskGrid"></div>
 
 <!-- ALSO WATCH -->
 <div class="section-label">Also Watch</div>
-<div class="watch-wrap">
-  <div class="watch-label">&#9888; Monitor Closely</div>
-  <div class="watch-item"><b>Ashdod</b> &mdash; Rejection doubled 0.51% &rarr; 1.05% (+107%). Uptime 94.9%.</div>
-  <div class="watch-item"><b>Or Yehuda</b> &mdash; Rejection +206% (0.23% &rarr; 0.70%). Frozen items thawing on arrival.</div>
-  <div class="watch-item"><b>Rehovot</b> &mdash; ADT 67 min &middot; 45-min rate 22.4% (lowest). Near-expiry products, broken eggs.</div>
-  <div class="watch-item"><b>Kiryat Eliezer</b> &mdash; Rejection improved to 0.12% but 4 complaint themes: mold, courier, cold chain, service.</div>
-</div>
+<div class="watch-row" id="watchRow"></div>
 
-<!-- FULL TABLE -->
+<!-- TABLE CONTROLS -->
 <div class="section-label">All Venue Scorecard</div>
 <div class="controls">
-  <input class="search-box" type="text" id="venueSearch" placeholder="&#128269; Search venue..." oninput="filterTable()">
+  <input class="search" type="text" id="searchInput" placeholder="Search venue..." oninput="filterTable()">
   <button class="filter-btn active" onclick="setFilter('all',this)">All venues</button>
-  <button class="filter-btn" onclick="setFilter('risk',this)">&#9888; High risk only</button>
-  <button class="filter-btn" onclick="setFilter('good',this)">&#9989; Rating &ge; 4.70</button>
-  <span class="count-pill" id="rowCount">30 venues</span>
+  <button class="filter-btn" onclick="setFilter('risk',this)">⚠ High risk</button>
+  <button class="filter-btn" onclick="setFilter('top',this)">✅ Rating ≥ 4.70</button>
+  <span class="count-pill" id="countPill">29</span>
 </div>
 <div class="table-wrap">
-  <div class="table-scroll">
-  <table id="venueTable">
-    <thead>
-      <tr>
-        <th onclick="sortTable('name')" data-col="name">Venue</th>
-        <th onclick="sortTable('goods')" data-col="goods">Rating &#9660;</th>
-        <th onclick="sortTable('pofr')" data-col="pofr">POFR</th>
-        <th onclick="sortTable('dt')" data-col="dt">ADT</th>
-        <th onclick="sortTable('orders')" data-col="orders">Orders</th>
-        <th onclick="sortTable('rejection')" data-col="rejection">Rejection</th>
-        <th onclick="sortTable('uptime')" data-col="uptime">Uptime</th>
-        <th onclick="sortTable('m45')" data-col="m45">&le;45 Min</th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-  <div class="no-results hidden" id="noResults">No venues match your search.</div>
-  </div>
+<table class="scorecard" id="scorecard">
+<thead>
+  <tr>
+    <th onclick="sortTable('name')">Venue ↕</th>
+    <th onclick="sortTable('goods')" style="text-align:center">Rating ↕</th>
+    <th onclick="sortTable('pofr')" style="text-align:center">POFR ↕</th>
+    <th onclick="sortTable('adt')" style="text-align:center">ADT ↕</th>
+    <th onclick="sortTable('orders')" style="text-align:center">Orders ↕</th>
+    <th onclick="sortTable('uptime')" style="text-align:center">Uptime ↕</th>
+    <th onclick="sortTable('u45m')" style="text-align:center">≤45m ↕</th>
+  </tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
 </div>
 
 <!-- COMPLAINT THEMES -->
-<div class="section-label">Customer Complaint Themes &mdash; 101 Comments (Ratings &le; 3)</div>
+<div class="section-label">Customer Complaint Themes</div>
+<div style="font-size:11px;color:var(--dim);margin-bottom:10px">90 comments — ratings ≤ 3 — week of June 15</div>
 <div class="complaint-grid">
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#129362; Freshness &amp; Expiry</span><span class="pill pill-red">24</span></div>
-    <div class="complaint-venues">Kiryon (3&times;) &middot; Kfar Saba (2&times;) &middot; Jerusalem Talpiot (2&times;) &middot; HaRova (2&times;) &middot; Rishon Maarav (2&times;) &middot; Rehovot (2&times;) &middot; Kiryat Eliezer (2&times;) &middot; Be&apos;er Sheva &middot; Ben Yehuda &middot; Florentine &middot; Modi&apos;in &middot; Netanya Center &middot; Ra&apos;anana &middot; Ramat Hasharon</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#128230; Wrong / Missing Items</span><span class="pill pill-red" style="background:#dbeafe;color:#1d4ed8">18</span></div>
-    <div class="complaint-venues">Petah Tikva (3&times;) &middot; Kiryat Ono (3&times;) &middot; Be&apos;er Sheva (2&times;) &middot; Netanya Poleg (2&times;) &middot; Herzliya (2&times;) &middot; Ashdod &middot; Florentine &middot; Jerusalem Talpiot &middot; Lev Haaretz &middot; Rehovot</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#10052;&#65039; Cold Chain</span><span class="pill" style="background:#f3e8ff;color:#7c3aed">16</span></div>
-    <div class="complaint-venues">Bialik &middot; Be&apos;er Sheva &middot; Hadera &middot; Herzliya (2&times;) &middot; Jerusalem Talpiot (2&times;) &middot; Kfar Saba &middot; Kiryat Eliezer &middot; Netanya Center &middot; Petah Tikva &middot; Ramat Hasharon &middot; Rehovot &middot; Rishon Maarav &middot; Yad Eliyahu</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#9201; Delivery Delays</span><span class="pill pill-amber">13</span></div>
-    <div class="complaint-venues">Bialik (3&times;) &middot; Neot Shamir (3&times;) &middot; Petah Tikva (2&times;) &middot; Be&apos;er Sheva &middot; Lev Haaretz &middot; Rishon Maarav &middot; Yad Eliyahu</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#128220; Packaging Issues</span><span class="pill" style="background:#dcfce7;color:#15803d">10</span></div>
-    <div class="complaint-venues">Ben Yehuda (2&times;) &middot; Kiryat Ono (2&times;) &middot; Florentine &middot; Kfar Saba &middot; Kiryat Eliezer &middot; Neot Shamir &middot; Netanya Center &middot; Ramat Hasharon &middot; Rehovot &middot; Wolfson</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#128683; Non-Delivery / Courier</span><span class="pill" style="background:#e0f2fe;color:#0284c7">10</span></div>
-    <div class="complaint-venues">Bialik &middot; Kfar Saba &middot; Kiryat Eliezer &middot; Neot Shamir (2&times;) &middot; Netanya Center &middot; Ra&apos;anana &middot; Rishon Maarav (2&times;) &middot; Top Dan &middot; Yad Eliyahu</div>
-  </div>
-  <div class="complaint-card">
-    <div class="complaint-head"><span class="complaint-cat">&#128222; Service &amp; Communication</span><span class="pill" style="background:#f3f4f6;color:#6b7280">10</span></div>
-    <div class="complaint-venues">Ashkelon &middot; Be&apos;er Sheva &middot; Bialik (2&times;) &middot; Kiryat Eliezer (2&times;) &middot; Neot Shamir &middot; Petah Tikva (3&times;) &middot; Ra&apos;anana</div>
-  </div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fef3c7;color:#d97706">12</span><span class="comp-cat">Freshness &amp; Expiry</span></div><div class="comp-venues">Modi'in, Be'er Sheva, Cinema City, Ben Yehuda, Top Dan, Netanya Poleg, HaRova, Netanya Center</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fee2e2;color:#dc2626">11</span><span class="comp-cat">Missing / Non-Delivery</span></div><div class="comp-venues">Ashdod, Neot Shamir, Top Dan, Rishon Maarav, Kiryat Eliezer, Yad Eliyahu, Netanya Center</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#e0f2fe;color:#0284c7">9</span><span class="comp-cat">Cold Chain / Thawed</span></div><div class="comp-venues">Wolfson, Bialik, Herzliya, Petah Tikva, Yad Eliyahu, Rehovot, Top Dan</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#f3e8ff;color:#9333ea">8</span><span class="comp-cat">Packaging / Broken</span></div><div class="comp-venues">Cinema City, Ness Ziona, Netanya Poleg, Kfar Saba, Wolfson, Ben Yehuda, Ramat Hasharon</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fef9c3;color:#ca8a04">6</span><span class="comp-cat">Delivery Delays</span></div><div class="comp-venues">Netanya Center (5.5h!), Be'er Sheva (1.5h), Wolfson (1.5h), Kfar Saba</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fce7f3;color:#be185d">6</span><span class="comp-cat">Wrong / Missing Items</span></div><div class="comp-venues">Kiryon, Kiryat Ono, Jerusalem Talpiot, Neot Shamir, Kfar Saba</div></div>
+  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fee2e2;color:#b91c1c">6</span><span class="comp-cat">Courier / Service</span></div><div class="comp-venues">Florentine ⚠️, Top Dan, Bialik, Rehovot, Be'er Sheva</div></div>
 </div>
 
 <!-- ACTIONS -->
 <div class="section-label">Actions for Next Week</div>
-<div class="action-list">
-  <div class="action-item"><div class="action-num">1</div><div class="action-body"><div class="action-title"><b>Freshness &amp; Expiry Audit</b> &mdash; Daily shelf scan before picking. Remove same-day and next-day expiry items from active zones.</div><div class="action-venues">Kiryon &middot; Kfar Saba &middot; Ben Yehuda &middot; Rehovot &middot; Jerusalem Talpiot</div></div></div>
-  <div class="action-item"><div class="action-num">2</div><div class="action-body"><div class="action-title"><b>Cold Chain Protocol</b> &mdash; Pick frozen/refrigerated last. Use insulated bags. Ice cream with ice pack, separate from dry goods.</div><div class="action-venues">Yad Eliyahu &middot; Rishon Maarav &middot; Petah Tikva &middot; Be&apos;er Sheva &middot; Kiryat Eliezer</div></div></div>
-  <div class="action-item"><div class="action-num">3</div><div class="action-body"><div class="action-title"><b>Substitution Policy</b> &mdash; Mandatory customer call before any substitution. Zero auto-swap without approval. Picker retraining.</div><div class="action-venues">Kiryat Ono &middot; Herzliya &middot; Netanya Poleg &middot; Be&apos;er Sheva</div></div></div>
-  <div class="action-item"><div class="action-num">4</div><div class="action-body"><div class="action-title"><b>Delivery Time Recovery</b> &mdash; Review prep capacity, picker-to-order ratio, and courier dispatch for evening peak.</div><div class="action-venues">Bialik &middot; Petah Tikva &middot; Rishon Maarav &middot; Neot Shamir</div></div></div>
-  <div class="action-item"><div class="action-num">5</div><div class="action-body"><div class="action-title"><b>45-Min Rate Recovery</b> &mdash; Both venues below 25% &mdash; lowest in network. Staffing and workflow escalation required.</div><div class="action-venues">Rehovot &middot; Ben Yehuda</div></div></div>
-  <div class="action-item"><div class="action-num">6</div><div class="action-body"><div class="action-title"><b>Rejection Spike Investigation</b> &mdash; Ashdod +107%, Or Yehuda +206%, Netanya Center +135%. Root cause and plan due this week.</div><div class="action-venues">Ashdod &middot; Or Yehuda &middot; Netanya Center</div></div></div>
-  <div class="action-item"><div class="action-num">7</div><div class="action-body"><div class="action-title"><b>Uptime Recovery</b> &mdash; Ashkelon 90.5% and Neot Shamir 94.0% below 96% threshold. Investigate closure reasons.</div><div class="action-venues">Ashkelon &middot; Neot Shamir</div></div></div>
+<div class="actions-card">
+  <div class="action-item"><div class="action-num">1</div><div><div class="action-title">Ben Yehuda — Emergency Ops Review</div><div class="action-detail">Goods 4.11 (network low), -0.28 WoW, ₪9,785 deductions. SM review + goods QA audit.</div><div class="action-venues">Ben Yehuda</div></div></div>
+  <div class="action-item"><div class="action-num">2</div><div><div class="action-title">Florentine — Courier Safety Escalation</div><div class="action-detail">Customer report: courier allegedly attacked. Escalate to courier ops & CS immediately.</div><div class="action-venues">Florentine ⚠️</div></div></div>
+  <div class="action-item"><div class="action-num">3</div><div><div class="action-title">Cold Chain Audit</div><div class="action-detail">9 comments about thawed/melted frozen goods. Freezer QA at opening + courier bag checks.</div><div class="action-venues">Wolfson · Bialik · Herzliya · Petah Tikva · Rehovot</div></div></div>
+  <div class="action-item"><div class="action-num">4</div><div><div class="action-title">Freshness Protocol Enforcement</div><div class="action-detail">Modi'in (moldy corned beef!), Be'er Sheva (expired cottage), Cinema City — reinforce expiry-date picker QA.</div><div class="action-venues">Modi'in · Be'er Sheva · Cinema City · Top Dan</div></div></div>
+  <div class="action-item"><div class="action-num">5</div><div><div class="action-title">Or Yehuda &amp; Ness Ziona Rating Recovery</div><div class="action-detail">Sharp drops: Or Yehuda -0.23, Ness Ziona -0.16, Kiryon -0.15. Investigate with SMs.</div><div class="action-venues">Or Yehuda · Ness Ziona · Kiryon</div></div></div>
+  <div class="action-item"><div class="action-num">6</div><div><div class="action-title">Rishon Maarav ADT &amp; Delivery Investigation</div><div class="action-detail">ADT jumped to 73 min, multiple non-delivery complaints. Dispatch capacity review.</div><div class="action-venues">Rishon Maarav</div></div></div>
+  <div class="action-item"><div class="action-num">7</div><div><div class="action-title">Petah Tikva &amp; Rehovot Uptime Review</div><div class="action-detail">Petah Tikva 91.4%, Rehovot 92.9% — system stability, opening hours, shift coverage.</div><div class="action-venues">Petah Tikva · Rehovot</div></div></div>
 </div>
 
-<div class="footer">Wolt Market Israel &nbsp;&middot;&nbsp; Nir Lachmi &nbsp;&middot;&nbsp; June 2026 &nbsp;&middot;&nbsp; <a href="https://github.com/nirlachmi-cpu/wolt-cx-dashboard" style="color:inherit">github.com/nirlachmi-cpu/wolt-cx-dashboard</a></div>
+<footer>Wolt Market Israel &nbsp;·&nbsp; Nir Lachmi &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; <a href="https://github.com/nirlachmi-cpu/wolt-cx-dashboard" style="color:var(--blue);text-decoration:none">GitHub</a></footer>
 
 </div>
 
 <script>
-const VENUES = [{"name": "Florentine", "fullName": "Wolt Market | Florentine", "goods": 4.78, "pofr": 80.1, "dt": 42.4, "orders": 3544, "rejection": 0.477, "rejPrev": 0.835, "rejWow": -42.8, "uptime": 99.99, "uptimePrev": 98.87, "uptimeWow": 1.12, "m45": 65.2, "highRisk": false}, {"name": "Ramat Hasharon", "fullName": "Wolt Market | Ramat Hasharon", "goods": 4.77, "pofr": 80.2, "dt": 46.9, "orders": 2396, "rejection": 0.581, "rejPrev": 0.483, "rejWow": 20.3, "uptime": 98.89, "uptimePrev": 100.0, "uptimeWow": -1.11, "m45": 54.4, "highRisk": false}, {"name": "Wolfson", "fullName": "Wolt Market | Wolfson", "goods": 4.71, "pofr": 81.3, "dt": 48.1, "orders": 4096, "rejection": 0.413, "rejPrev": 0.509, "rejWow": -18.9, "uptime": 99.11, "uptimePrev": 99.31, "uptimeWow": -0.2, "m45": 56.3, "highRisk": false}, {"name": "Herzliya", "fullName": "Wolt Market | Herzliya", "goods": 4.7, "pofr": 79.5, "dt": 41.7, "orders": 3969, "rejection": 0.251, "rejPrev": 0.176, "rejWow": 43.2, "uptime": 97.71, "uptimePrev": 98.88, "uptimeWow": -1.17, "m45": 64.9, "highRisk": false}, {"name": "Hadera", "fullName": "Wolt Market | Hadera", "goods": 4.7, "pofr": 83.9, "dt": 31.6, "orders": 1202, "rejection": 0.083, "rejPrev": 0.088, "rejWow": -5.9, "uptime": 99.46, "uptimePrev": 97.78, "uptimeWow": 1.68, "m45": 86.1, "highRisk": false}, {"name": "Kiryon", "fullName": "Wolt Market | Kiryon", "goods": 4.7, "pofr": 81.8, "dt": 39.2, "orders": 3098, "rejection": 0.418, "rejPrev": 0.261, "rejWow": 60.0, "uptime": 99.92, "uptimePrev": 99.93, "uptimeWow": -0.02, "m45": 70.8, "highRisk": false}, {"name": "Kiryat Eliezer", "fullName": "Wolt Market | Kiryat Eliezer", "goods": 4.69, "pofr": 79.1, "dt": 40.4, "orders": 3471, "rejection": 0.115, "rejPrev": 0.519, "rejWow": -77.8, "uptime": 99.7, "uptimePrev": 99.9, "uptimeWow": -0.2, "m45": 68.6, "highRisk": false}, {"name": "Ashdod", "fullName": "Wolt Market | Ashdod", "goods": 4.68, "pofr": 77.5, "dt": 49.4, "orders": 2915, "rejection": 1.052, "rejPrev": 0.508, "rejWow": 107.3, "uptime": 94.94, "uptimePrev": 96.06, "uptimeWow": -1.12, "m45": 54.2, "highRisk": true}, {"name": "Lev Haaretz", "fullName": "Wolt Market | Lev Haaretz", "goods": 4.68, "pofr": 78.5, "dt": 59.2, "orders": 1814, "rejection": 0.33, "rejPrev": 0.63, "rejWow": -47.7, "uptime": 98.22, "uptimePrev": 95.15, "uptimeWow": 3.07, "m45": 37.4, "highRisk": false}, {"name": "Ness Ziona", "fullName": "Wolt Market | Ness Ziona", "goods": 4.64, "pofr": 82.3, "dt": 46.1, "orders": 1747, "rejection": 0.456, "rejPrev": 0.97, "rejWow": -53.0, "uptime": 96.65, "uptimePrev": 97.82, "uptimeWow": -1.17, "m45": 59.0, "highRisk": false}, {"name": "Netanya Center", "fullName": "Wolt Market | Netanya Center", "goods": 4.63, "pofr": 76.6, "dt": 49.7, "orders": 3455, "rejection": 0.661, "rejPrev": 0.281, "rejWow": 135.4, "uptime": 100.0, "uptimePrev": 99.97, "uptimeWow": 0.03, "m45": 53.6, "highRisk": false}, {"name": "HaRova", "fullName": "Wolt Market | HaRova", "goods": 4.63, "pofr": 79.8, "dt": 50.3, "orders": 3376, "rejection": 0.354, "rejPrev": 0.213, "rejWow": 66.1, "uptime": 98.14, "uptimePrev": 98.94, "uptimeWow": -0.8, "m45": 51.8, "highRisk": false}, {"name": "Or Yehuda", "fullName": "Wolt Market | Or Yehuda", "goods": 4.61, "pofr": 80.1, "dt": 45.4, "orders": 1414, "rejection": 0.703, "rejPrev": 0.229, "rejWow": 206.3, "uptime": 98.91, "uptimePrev": 100.0, "uptimeWow": -1.09, "m45": 57.3, "highRisk": false}, {"name": "Yad Eliyahu", "fullName": "Wolt Market | Yad Eliyahu", "goods": 4.6, "pofr": 78.4, "dt": 42.6, "orders": 2662, "rejection": 0.82, "rejPrev": 0.424, "rejWow": 93.2, "uptime": 98.86, "uptimePrev": 99.41, "uptimeWow": -0.54, "m45": 64.8, "highRisk": true}, {"name": "Netanya Poleg", "fullName": "Wolt Market | Netanya Poleg", "goods": 4.6, "pofr": 76.5, "dt": 47.7, "orders": 2764, "rejection": 0.181, "rejPrev": 0.337, "rejWow": -46.4, "uptime": 98.35, "uptimePrev": 99.6, "uptimeWow": -1.25, "m45": 56.6, "highRisk": false}, {"name": "Ashkelon", "fullName": "Wolt Market | Ashkelon", "goods": 4.6, "pofr": 73.0, "dt": 50.4, "orders": 2025, "rejection": 0.589, "rejPrev": 0.334, "rejWow": 76.5, "uptime": 90.53, "uptimePrev": 96.54, "uptimeWow": -6.01, "m45": 52.4, "highRisk": true}, {"name": "Cinema City", "fullName": "Wolt Market | Cinema City", "goods": 4.59, "pofr": 72.5, "dt": 42.0, "orders": 1930, "rejection": 0.361, "rejPrev": 0.336, "rejWow": 7.4, "uptime": 95.14, "uptimePrev": 96.47, "uptimeWow": -1.33, "m45": 69.0, "highRisk": true}, {"name": "Neot Shamir", "fullName": "Wolt Market | Neot Shamir", "goods": 4.58, "pofr": 74.4, "dt": 57.0, "orders": 1823, "rejection": 0.654, "rejPrev": 0.369, "rejWow": 77.4, "uptime": 93.99, "uptimePrev": 100.0, "uptimeWow": -6.01, "m45": 45.6, "highRisk": true}, {"name": "Kiryat Ono", "fullName": "Wolt Market | Kiryat Ono", "goods": 4.58, "pofr": 80.3, "dt": 46.8, "orders": 3789, "rejection": 0.394, "rejPrev": 0.495, "rejWow": -20.4, "uptime": 99.76, "uptimePrev": 100.0, "uptimeWow": -0.24, "m45": 54.6, "highRisk": false}, {"name": "Kfar Saba", "fullName": "Wolt Market | Kfar Saba", "goods": 4.57, "pofr": 74.4, "dt": 43.5, "orders": 2634, "rejection": 0.454, "rejPrev": 0.269, "rejWow": 68.5, "uptime": 98.26, "uptimePrev": 98.84, "uptimeWow": -0.58, "m45": 62.2, "highRisk": false}, {"name": "Bialik", "fullName": "Wolt Market | Bialik", "goods": 4.56, "pofr": 77.9, "dt": 62.4, "orders": 5582, "rejection": 0.993, "rejPrev": 2.09, "rejWow": -52.5, "uptime": 94.66, "uptimePrev": 91.89, "uptimeWow": 2.77, "m45": 35.0, "highRisk": true}, {"name": "Petah Tikva", "fullName": "Wolt Market | Petah Tikva", "goods": 4.54, "pofr": 76.4, "dt": 62.3, "orders": 3604, "rejection": 0.989, "rejPrev": 0.844, "rejWow": 17.3, "uptime": 94.77, "uptimePrev": 95.81, "uptimeWow": -1.03, "m45": 32.1, "highRisk": true}, {"name": "Ra'anana", "fullName": "Wolt Market | Ra'anana", "goods": 4.53, "pofr": 79.1, "dt": 45.9, "orders": 3501, "rejection": 0.37, "rejPrev": 0.312, "rejWow": 18.4, "uptime": 98.72, "uptimePrev": 99.06, "uptimeWow": -0.34, "m45": 58.8, "highRisk": false}, {"name": "Top Dan", "fullName": "Wolt Market | Top Dan", "goods": 4.48, "pofr": 79.8, "dt": 58.0, "orders": 2782, "rejection": 0.572, "rejPrev": 0.567, "rejWow": 0.8, "uptime": 95.95, "uptimePrev": 99.05, "uptimeWow": -3.11, "m45": 39.3, "highRisk": true}, {"name": "Rehovot", "fullName": "Wolt Market | Rehovot", "goods": 4.48, "pofr": 75.4, "dt": 67.3, "orders": 3023, "rejection": 0.853, "rejPrev": 0.838, "rejWow": 1.8, "uptime": 95.66, "uptimePrev": 98.35, "uptimeWow": -2.68, "m45": 22.4, "highRisk": true}, {"name": "Jerusalem Talpiot", "fullName": "Wolt Market | Jerusalem Talpiot", "goods": 4.4, "pofr": 81.8, "dt": 50.0, "orders": 3043, "rejection": 0.815, "rejPrev": 0.628, "rejWow": 29.7, "uptime": 95.65, "uptimePrev": 93.49, "uptimeWow": 2.16, "m45": 49.5, "highRisk": true}, {"name": "Ben Yehuda", "fullName": "Wolt Market | Ben Yehuda", "goods": 4.39, "pofr": 74.8, "dt": 65.4, "orders": 3497, "rejection": 1.159, "rejPrev": 1.384, "rejWow": -16.3, "uptime": 91.54, "uptimePrev": 94.36, "uptimeWow": -2.82, "m45": 26.9, "highRisk": true}, {"name": "Modi'in", "fullName": "Wolt Market | Modi'in", "goods": 4.39, "pofr": 73.4, "dt": 55.2, "orders": 2101, "rejection": 0.85, "rejPrev": 1.982, "rejWow": -57.1, "uptime": 97.25, "uptimePrev": 95.83, "uptimeWow": 1.41, "m45": 41.2, "highRisk": true}, {"name": "Be'er Sheva", "fullName": "Wolt Market | Be'er Sheva", "goods": 4.37, "pofr": 77.7, "dt": 55.7, "orders": 3371, "rejection": 1.202, "rejPrev": 1.097, "rejWow": 9.5, "uptime": 92.66, "uptimePrev": 95.85, "uptimeWow": -3.19, "m45": 34.8, "highRisk": true}, {"name": "Rishon Maarav", "fullName": "Wolt Market | Rishon Maarav", "goods": 4.33, "pofr": 75.5, "dt": 73.0, "orders": 3377, "rejection": 0.647, "rejPrev": 0.53, "rejWow": 22.1, "uptime": 96.03, "uptimePrev": 97.57, "uptimeWow": -1.54, "m45": 24.4, "highRisk": true}];
+const VENUES = [{"name": "Lev Haaretz", "goods": 4.8, "goodsPrev": 4.68, "pofr": 91.8, "adt": 59, "orders": 1789, "uptime": 99.3, "u45m": 37, "settle": 1296}, {"name": "Kiryat Eliezer", "goods": 4.78, "goodsPrev": 4.69, "pofr": 92.3, "adt": 40, "orders": 3430, "uptime": 99.7, "u45m": 69, "settle": 2156}, {"name": "Kiryat Ono", "goods": 4.73, "goodsPrev": 4.58, "pofr": 91.0, "adt": 47, "orders": 3662, "uptime": 99.4, "u45m": 55, "settle": 1927}, {"name": "Florentine", "goods": 4.69, "goodsPrev": 4.78, "pofr": 88.8, "adt": 42, "orders": 3362, "uptime": 96.5, "u45m": 65, "settle": 4524}, {"name": "Ramat Hasharon", "goods": 4.66, "goodsPrev": 4.77, "pofr": 93.8, "adt": 47, "orders": 2440, "uptime": 96.2, "u45m": 54, "settle": 2155}, {"name": "Herzliya", "goods": 4.64, "goodsPrev": 4.7, "pofr": 90.0, "adt": 42, "orders": 4004, "uptime": 94.8, "u45m": 65, "settle": 3716}, {"name": "Wolfson", "goods": 4.62, "goodsPrev": 4.71, "pofr": 93.2, "adt": 48, "orders": 4139, "uptime": 99.1, "u45m": 56, "settle": 2077}, {"name": "Ashdod", "goods": 4.59, "goodsPrev": 4.68, "pofr": 89.7, "adt": 49, "orders": 2803, "uptime": 96.7, "u45m": 54, "settle": 3865}, {"name": "Be'er Sheva", "goods": 4.59, "goodsPrev": 4.37, "pofr": 92.0, "adt": 56, "orders": 3374, "uptime": 97.9, "u45m": 35, "settle": 1889}, {"name": "Petah Tikva", "goods": 4.58, "goodsPrev": 4.54, "pofr": 86.9, "adt": 62, "orders": 3298, "uptime": 91.4, "u45m": 32, "settle": 2314}, {"name": "Rehovot", "goods": 4.58, "goodsPrev": 4.48, "pofr": 81.3, "adt": 67, "orders": 2798, "uptime": 92.9, "u45m": 22, "settle": 2196}, {"name": "Netanya Center", "goods": 4.58, "goodsPrev": 4.63, "pofr": 87.1, "adt": 50, "orders": 3448, "uptime": 99.8, "u45m": 54, "settle": 2373}, {"name": "Modi'in", "goods": 4.56, "goodsPrev": 4.39, "pofr": 83.7, "adt": 55, "orders": 1980, "uptime": 96.2, "u45m": 41, "settle": 3038}, {"name": "Jerusalem Talpiot", "goods": 4.57, "goodsPrev": 4.4, "pofr": 92.8, "adt": 50, "orders": 2884, "uptime": 93.6, "u45m": 49, "settle": 3149}, {"name": "Ra'anana", "goods": 4.54, "goodsPrev": 4.53, "pofr": 90.0, "adt": 46, "orders": 3360, "uptime": 96.0, "u45m": 59, "settle": 2597}, {"name": "Yad Eliyahu", "goods": 4.55, "goodsPrev": 4.6, "pofr": 90.3, "adt": 43, "orders": 2787, "uptime": 97.7, "u45m": 65, "settle": 2279}, {"name": "Kiryon", "goods": 4.55, "goodsPrev": 4.7, "pofr": 92.8, "adt": 39, "orders": 2997, "uptime": 99.9, "u45m": 71, "settle": 1074}, {"name": "Kfar Saba", "goods": 4.55, "goodsPrev": 4.57, "pofr": 89.0, "adt": 44, "orders": 2713, "uptime": 98.6, "u45m": 62, "settle": 1724}, {"name": "Netanya Poleg", "goods": 4.5, "goodsPrev": 4.6, "pofr": 86.4, "adt": 48, "orders": 2710, "uptime": 98.1, "u45m": 57, "settle": 1949}, {"name": "HaRova", "goods": 4.5, "goodsPrev": 4.63, "pofr": 92.5, "adt": 50, "orders": 3455, "uptime": 99.1, "u45m": 52, "settle": 7384}, {"name": "Bialik", "goods": 4.49, "goodsPrev": 4.56, "pofr": 86.0, "adt": 62, "orders": 5469, "uptime": 95.0, "u45m": 35, "settle": 0}, {"name": "Cinema City", "goods": 4.48, "goodsPrev": 4.59, "pofr": 89.8, "adt": 42, "orders": 2022, "uptime": 97.8, "u45m": 69, "settle": 968}, {"name": "Ness Ziona", "goods": 4.48, "goodsPrev": 4.64, "pofr": 94.5, "adt": 46, "orders": 1748, "uptime": 97.6, "u45m": 59, "settle": 711}, {"name": "Ashkelon", "goods": 4.46, "goodsPrev": 4.6, "pofr": 81.9, "adt": 50, "orders": 2139, "uptime": 97.4, "u45m": 52, "settle": 564}, {"name": "Top Dan", "goods": 4.45, "goodsPrev": 4.48, "pofr": 88.8, "adt": 58, "orders": 2590, "uptime": 95.0, "u45m": 39, "settle": 3591}, {"name": "Neot Shamir", "goods": 4.45, "goodsPrev": 4.58, "pofr": 92.4, "adt": 57, "orders": 1919, "uptime": 97.7, "u45m": 46, "settle": 1068}, {"name": "Or Yehuda", "goods": 4.38, "goodsPrev": 4.61, "pofr": 90.2, "adt": 45, "orders": 1388, "uptime": 98.8, "u45m": 57, "settle": 848}, {"name": "Rishon Maarav", "goods": 4.4, "goodsPrev": 4.33, "pofr": 91.1, "adt": 73, "orders": 3373, "uptime": 98.6, "u45m": 24, "settle": 3671}, {"name": "Ben Yehuda", "goods": 4.11, "goodsPrev": 4.39, "pofr": 86.9, "adt": 65, "orders": 3518, "uptime": 94.5, "u45m": 27, "settle": 9785}];
 
-// Sort state
-let sortCol = 'goods', sortDir = -1;
-let filterMode = 'all';
-let searchQuery = '';
-
-function getVal(v, col) {
-  const x = v[col];
-  if (x === null || x === undefined) return -Infinity;
-  return typeof x === 'string' ? x.toLowerCase() : x;
+function gColor(g) {
+  if (g >= 4.7) return '#16a34a';
+  if (g >= 4.5) return '#d97706';
+  return '#dc2626';
 }
+function isHighRisk(v) {
+  return v.goods < 4.5 || v.adt > 60 || v.uptime < 96.0;
+}
+function isWatch(v) {
+  if (isHighRisk(v)) return false;
+  return v.goods < 4.60 || v.adt > 55 || v.uptime < 97.0 || v.pofr < 87.0;
+}
+
+// Build risk cards
+const rg = document.getElementById('riskGrid');
+VENUES.filter(isHighRisk).forEach(v => {
+  const tags = [];
+  if (v.goods < 4.5) tags.push(`<span class="tag">Rating ${v.goods.toFixed(2)}</span>`);
+  if (v.adt > 60) tags.push(`<span class="tag">ADT ${v.adt}m</span>`);
+  if (v.uptime < 96) tags.push(`<span class="tag">Uptime ${v.uptime.toFixed(1)}%</span>`);
+  rg.innerHTML += `<div class="risk-card"><div class="risk-name">${v.name}</div><div class="risk-tags">${tags.join('')}</div></div>`;
+});
+
+// Build watch row
+const wr = document.getElementById('watchRow');
+VENUES.filter(isWatch).forEach(v => {
+  const r = [];
+  if (v.goods < 4.60) r.push(`Rating ${v.goods.toFixed(2)}`);
+  if (v.adt > 55) r.push(`ADT ${v.adt}m`);
+  if (v.uptime < 97) r.push(`Uptime ${v.uptime.toFixed(1)}%`);
+  if (v.pofr < 87) r.push(`POFR ${v.pofr.toFixed(0)}%`);
+  wr.innerHTML += `<div class="watch-item">${v.name} <span style="font-weight:400;color:#b45309">${r.join(' · ')}</span></div>`;
+});
+
+// Table
+let sortCol = 'goods', sortDir = -1, filterMode = 'all', searchQ = '';
 
 function renderTable() {
   let data = [...VENUES];
-
-  // Filter
-  if (filterMode === 'risk') data = data.filter(v => v.highRisk);
-  if (filterMode === 'good') data = data.filter(v => v.goods >= 4.70);
-  if (searchQuery) data = data.filter(v => v.name.toLowerCase().includes(searchQuery));
-
-  // Sort
-  data.sort((a, b) => {
-    const av = getVal(a, sortCol), bv = getVal(b, sortCol);
-    if (av === bv) return 0;
-    if (av === -Infinity) return 1;
-    if (bv === -Infinity) return -1;
-    return av < bv ? sortDir : -sortDir;
+  if (filterMode === 'risk') data = data.filter(isHighRisk);
+  if (filterMode === 'top') data = data.filter(v => v.goods >= 4.70);
+  if (searchQ) data = data.filter(v => v.name.toLowerCase().includes(searchQ));
+  data.sort((a,b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+    return sortDir * (av - bv);
   });
-
-  // Render
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-  document.getElementById('rowCount').textContent = data.length + ' venues';
-  document.getElementById('noResults').classList.toggle('hidden', data.length > 0);
-
-  data.forEach(v => {
-    const gc = v.goods >= 4.7 ? 'pill-green' : v.goods >= 4.5 ? 'pill-amber' : 'pill-red';
-    const dtc = v.dt <= 45 ? 'good' : v.dt <= 58 ? 'warn' : 'bad';
-    const rcc = v.rejection <= 0.4 ? 'good' : v.rejection <= 0.8 ? 'warn' : 'bad';
-    const ucc = !v.uptime ? '' : v.uptime >= 97 ? 'good' : v.uptime >= 95 ? 'warn' : 'bad';
-    const m45c = !v.m45 ? '' : v.m45 >= 55 ? 'good' : v.m45 >= 40 ? 'warn' : 'bad';
-
-    const rejWow = v.rejWow !== null ? `<br><span class="${v.rejWow<0?'wow-up':'wow-down'}">${v.rejWow>0?'+':''}${v.rejWow}%</span>` : '';
-    const upWow = v.uptimeWow !== null ? `<br><span class="${v.uptimeWow>0?'wow-up':'wow-down'}">${v.uptimeWow>0?'+':''}${v.uptimeWow}pp</span>` : '';
-
-    const riskDot = v.highRisk ? '<span class="risk-dot"></span>' : '';
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><span class="venue-name">${riskDot}${v.name}</span></td>
-      <td><span class="pill ${gc}">${v.goods}</span></td>
-      <td>${v.pofr}%</td>
-      <td class="${dtc}" style="font-weight:600">${v.dt}m</td>
-      <td>${v.orders.toLocaleString()}</td>
-      <td class="${rcc}" style="font-weight:600">${v.rejection !== null ? v.rejection+'%' : '–'}${rejWow}</td>
-      <td class="${ucc}" style="font-weight:600">${v.uptime !== null ? v.uptime+'%' : '–'}${upWow}</td>
-      <td class="${m45c}" style="font-weight:600">${v.m45 !== null ? v.m45+'%' : '–'}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // Update sort indicators
-  document.querySelectorAll('th').forEach(th => {
-    th.classList.remove('sort-asc','sort-desc');
-    if (th.dataset.col === sortCol) th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
-  });
+  document.getElementById('countPill').textContent = data.length;
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = data.map((v,i) => {
+    const dot = isHighRisk(v) ? '<span class="dot-red"></span>' : '';
+    const gdiff = (v.goods - v.goodsPrev).toFixed(2);
+    const diffSpan = gdiff > 0 
+      ? `<span style="font-size:10px;color:#16a34a;margin-left:4px">▲${gdiff}</span>`
+      : (gdiff < 0 ? `<span style="font-size:10px;color:#dc2626;margin-left:4px">▼${Math.abs(gdiff)}</span>` : '');
+    const bg = i%2===1?'#fafafa':'#fff';
+    const adtC = v.adt<=45?'#16a34a':(v.adt<=58?'#d97706':'#dc2626');
+    const pofrC = v.pofr>=90?'#16a34a':(v.pofr>=82?'#d97706':'#dc2626');
+    const upC = v.uptime>=97?'#16a34a':(v.uptime>=95?'#d97706':'#dc2626');
+    return `<tr style="background:${bg}">
+      <td>${dot}${v.name}</td>
+      <td style="text-align:center;font-weight:800;color:${gColor(v.goods)}">${v.goods.toFixed(2)}${diffSpan}</td>
+      <td style="text-align:center;color:${pofrC}">${v.pofr.toFixed(0)}%</td>
+      <td style="text-align:center;color:${adtC}">${v.adt}m</td>
+      <td style="text-align:center">${v.orders.toLocaleString()}</td>
+      <td style="text-align:center;color:${upC}">${v.uptime.toFixed(1)}%</td>
+      <td style="text-align:center">${v.u45m}%</td>
+    </tr>`;
+  }).join('');
 }
 
 function sortTable(col) {
@@ -370,71 +275,68 @@ function sortTable(col) {
   else { sortCol = col; sortDir = col === 'name' ? 1 : -1; }
   renderTable();
 }
-
-function filterTable() {
-  searchQuery = document.getElementById('venueSearch').value.toLowerCase().trim();
-  renderTable();
-}
-
 function setFilter(mode, btn) {
   filterMode = mode;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderTable();
 }
-
-// Init table
+function filterTable() {
+  searchQ = document.getElementById('searchInput').value.toLowerCase();
+  renderTable();
+}
 renderTable();
 
-// ── Charts ──────────────────────────────────────────────────────────────
+// Ratings chart
 const sorted = [...VENUES].sort((a,b) => a.goods - b.goods);
-const ratingColors = sorted.map(v => v.goods >= 4.7 ? '#16a34a' : v.goods >= 4.5 ? '#d97706' : '#dc2626');
-
 new Chart(document.getElementById('ratingsChart'), {
   type: 'bar',
   data: {
     labels: sorted.map(v => v.name),
     datasets: [{
       data: sorted.map(v => v.goods),
-      backgroundColor: ratingColors,
+      backgroundColor: sorted.map(v => gColor(v.goods) + '33'),
+      borderColor: sorted.map(v => gColor(v.goods)),
+      borderWidth: 1.5,
       borderRadius: 4,
-      borderSkipped: false,
     }]
   },
   options: {
     indexAxis: 'y',
     responsive: true,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x.toFixed(2) } } },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Rating: ${ctx.parsed.x.toFixed(2)}` } } },
     scales: {
-      x: { min: 4.0, max: 5.0, grid: { color: '#f3f4f6' }, ticks: { font: { size: 10, family: 'Nunito' } } },
-      y: { grid: { display: false }, ticks: { font: { size: 10, family: 'Nunito' }, color: '#6b7280' } }
+      x: { min: 3.8, max: 5.0, grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 } } }
     }
   }
 });
 
-// Rejection WoW chart — biggest movers
-const rejData = VENUES.filter(v => v.rejWow !== null).sort((a,b) => a.rejWow - b.rejWow);
-const extremes = [...rejData.slice(0,5), ...rejData.slice(-5)].sort((a,b) => a.rejWow - b.rejWow);
-
-new Chart(document.getElementById('rejChart'), {
+// Movers chart
+const movers = [...VENUES].map(v => ({...v, diff: v.goods - v.goodsPrev}))
+  .sort((a,b) => b.diff - a.diff);
+const top5 = movers.slice(0,5).reverse();
+const bot5 = movers.slice(-5);
+const moverData = [...bot5, ...top5];
+new Chart(document.getElementById('moversChart'), {
   type: 'bar',
   data: {
-    labels: extremes.map(v => v.name),
+    labels: moverData.map(v => v.name),
     datasets: [{
-      data: extremes.map(v => v.rejWow),
-      backgroundColor: extremes.map(v => v.rejWow < 0 ? '#dcfce7' : '#fee2e2'),
-      borderColor: extremes.map(v => v.rejWow < 0 ? '#16a34a' : '#dc2626'),
-      borderWidth: 1,
+      data: moverData.map(v => v.diff),
+      backgroundColor: moverData.map(v => v.diff >= 0 ? '#16a34a33' : '#dc262633'),
+      borderColor: moverData.map(v => v.diff >= 0 ? '#16a34a' : '#dc2626'),
+      borderWidth: 1.5,
       borderRadius: 4,
     }]
   },
   options: {
     indexAxis: 'y',
     responsive: true,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => (ctx.parsed.x > 0 ? '+' : '') + ctx.parsed.x.toFixed(1) + '%' } } },
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x >= 0 ? '+' : ''}${ctx.parsed.x.toFixed(2)}` } } },
     scales: {
-      x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 10, family: 'Nunito' }, callback: v => (v>0?'+':'')+v+'%' } },
-      y: { grid: { display: false }, ticks: { font: { size: 10, family: 'Nunito' }, color: '#6b7280' } }
+      x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 } } }
     }
   }
 });
