@@ -3,334 +3,631 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wolt Market IL — CX Dashboard W/E June 22, 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Wolt Market IL — CX Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--green:#16a34a;--red:#dc2626;--amber:#d97706;--blue:#009de0;--bg:#f2f3f7;--card:#fff;--border:#e5e7eb;--muted:#6b7280;--dim:#9ca3af}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);font-family:'Nunito',-apple-system,sans-serif;color:#111;font-size:13px}
-.page{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
-nav{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.logo{width:36px;height:36px;background:var(--blue);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
-.nav-title{font-size:17px;font-weight:800}
-.nav-date{margin-left:auto;background:#fff;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--muted);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Nunito',-apple-system,Arial,sans-serif;}
+body{background:#f5f5f7;color:#1d1d1f;font-size:13px;min-height:100vh;}
 
-/* ── VENUE FILTER ── */
-.venue-filter-card{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:16px}
-.venue-filter-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;user-select:none}
-.venue-filter-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
-.venue-filter-toggle{font-size:12px;color:var(--blue);margin-left:auto;font-weight:700}
-.venue-chips-wrap{display:flex;flex-wrap:wrap;gap:6px}
-.venue-chip{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .12s;white-space:nowrap}
-.venue-chip:hover{border-color:var(--blue);color:var(--blue)}
-.venue-chip.selected{background:var(--blue);border-color:var(--blue);color:#fff}
-.venue-chip.risk{border-color:#fca5a5}
-.venue-chip.risk.selected{background:var(--red);border-color:var(--red)}
-.venue-filter-footer{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-.clear-btn{font-size:12px;color:var(--red);font-weight:700;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
-.clear-btn:hover{text-decoration:underline}
-.selected-summary{font-size:12px;color:var(--muted)}
+/* LAYOUT */
+.page{max-width:960px;margin:0 auto;padding:36px 20px 60px;}
+.section{margin-bottom:12px;}
+.card{background:#fff;border-radius:14px;padding:20px 20px;}
+.card-sm{background:#fff;border-radius:14px;padding:16px 18px;}
 
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
-.kpi{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.kpi-label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.kpi-val{font-size:24px;font-weight:800;line-height:1}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-@media(max-width:680px){.charts-row{grid-template-columns:1fr}}
-.chart-card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.chart-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
-.section-label{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:.09em;text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--border)}
-.risk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:4px}
-.risk-card{background:#fff;border-radius:12px;padding:14px 16px;border-left:3px solid var(--red);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.risk-name{font-size:13px;font-weight:800;margin-bottom:4px}
-.risk-tags{display:flex;flex-wrap:wrap;gap:4px}
-.tag{font-size:10px;font-weight:700;background:#fef2f2;color:var(--red);border-radius:4px;padding:2px 7px}
-.watch-row{background:#fffbeb;border-left:3px solid #f59e0b;border-radius:12px;padding:14px 18px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px}
-.watch-item{font-size:12px;font-weight:700;color:#92400e}
-.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.search{flex:1;min-width:160px;padding:8px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;outline:none}
-.search:focus{border-color:var(--blue)}
-.filter-btn{padding:7px 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s}
-.filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.count-pill{font-size:11px;font-weight:700;background:var(--blue);color:#fff;border-radius:12px;padding:2px 10px;margin-left:auto}
-.table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow-x:auto}
-table.scorecard{width:100%;border-collapse:collapse;min-width:580px}
-table.scorecard th{padding:10px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;background:#f9fafb;border-bottom:2px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
-table.scorecard th:hover{color:#111}
-table.scorecard td{padding:9px 12px;font-size:13px;border-bottom:1px solid #f3f4f6}
-table.scorecard tr:last-child td{border-bottom:none}
-table.scorecard tr:hover td{background:#f9fafb}
-.dot-red{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle}
-.complaint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:4px}
-.complaint-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.comp-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.comp-pill{font-size:11px;font-weight:800;border-radius:20px;padding:2px 10px}
-.comp-cat{font-size:12.5px;font-weight:700}
-.comp-venues{font-size:11px;color:var(--muted);line-height:1.5}
-.actions-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.action-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6}
-.action-item:last-child{border-bottom:none}
-.action-num{min-width:26px;height:26px;background:#2563eb;color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
-.action-title{font-size:13px;font-weight:700}
-.action-detail{font-size:11.5px;color:var(--muted);margin-top:2px}
-.action-venues{font-size:11px;color:var(--dim);margin-top:2px;font-style:italic}
-.hidden{display:none!important}
-footer{text-align:center;padding:32px 0 0;font-size:11px;color:var(--dim)}
+/* HEADER */
+.header{padding:0 0 24px;}
+.header-label{font-size:9px;font-weight:500;color:#aeaeb2;text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px;}
+.header-title{font-size:26px;font-weight:700;color:#c8930a;letter-spacing:-.3px;line-height:1.1;}
+.header-sub{font-size:12px;color:#c7c7cc;font-weight:400;margin-top:5px;}
+
+/* FILTERS */
+.filters-bar{background:#fff;border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+.filter-label{font-size:9px;font-weight:500;color:#aeaeb2;text-transform:uppercase;letter-spacing:.18em;margin-bottom:10px;}
+.week-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.week-tab{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:#f2f2f7;color:#6e6e73;transition:all .15s;}
+.week-tab.active{background:#1d1d1f;color:#fff;}
+.venue-chips-wrap{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.chip{padding:5px 12px;border-radius:20px;font-size:10.5px;font-weight:500;cursor:pointer;border:1.5px solid #e5e5ea;background:#fff;color:#3a3a3c;transition:all .15s;white-space:nowrap;}
+.chip:hover{border-color:#aeaeb2;}
+.chip.active{background:#1d1d1f;color:#fff;border-color:#1d1d1f;}
+.chip-all{background:#f2f2f7;border-color:#f2f2f7;color:#6e6e73;}
+.chip-all.active{background:#1d1d1f;color:#fff;border-color:#1d1d1f;}
+.filter-toggle{font-size:10px;font-weight:500;color:#007aff;cursor:pointer;padding:5px 12px;background:#f0f6ff;border-radius:20px;border:none;white-space:nowrap;}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px;}
+.kpi-card{background:#fff;border-radius:14px;padding:16px 12px;text-align:center;}
+.kpi-val{font-size:22px;font-weight:600;color:#1d1d1f;line-height:1;}
+.kpi-val.bad{color:#ff3b30;}
+.kpi-badge{display:inline-block;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:600;margin:6px 0 3px;}
+.badge-green{background:#f4fef6;color:#34c759;}
+.badge-red{background:#fff4f3;color:#ff3b30;}
+.badge-gray{background:#f2f2f7;color:#6e6e73;}
+.kpi-target{font-size:8.5px;font-weight:400;color:#c7c7cc;margin-bottom:2px;}
+.kpi-label{font-size:9px;font-weight:500;color:#aeaeb2;text-transform:uppercase;letter-spacing:.06em;}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.chart-title{font-size:9px;font-weight:500;color:#aeaeb2;text-transform:uppercase;letter-spacing:.16em;margin-bottom:14px;}
+canvas{max-height:240px;}
+
+/* MOVERS */
+.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.mover-label{font-size:9.5px;font-weight:600;margin-bottom:8px;}
+.mover-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f5f5f7;font-size:11px;}
+.mover-row:last-child{border-bottom:none;}
+.mover-venue{color:#3a3a3c;font-weight:400;}
+.mover-val-up{color:#34c759;font-weight:600;white-space:nowrap;}
+.mover-val-dn{color:#ff3b30;font-weight:600;white-space:nowrap;}
+
+/* HIGH RISK */
+.risk-item{padding:12px 0;border-bottom:1px solid #f2f2f7;}
+.risk-item:last-child{border-bottom:none;}
+.risk-name{font-size:12.5px;font-weight:600;color:#1d1d1f;}
+.risk-meta{font-size:10.5px;font-weight:400;color:#6e6e73;margin-top:3px;}
+.risk-cx{font-size:10.5px;font-weight:400;color:#aeaeb2;margin-top:2px;}
+
+/* COMPLAINTS */
+.complaint-row{padding:8px 0;border-bottom:1px solid #f2f2f7;}
+.complaint-row:last-child{border-bottom:none;}
+.complaint-head{display:flex;justify-content:space-between;align-items:center;}
+.complaint-name{font-size:11.5px;font-weight:500;color:#1d1d1f;}
+.complaint-venues{font-size:10px;font-weight:400;color:#aeaeb2;margin-top:4px;line-height:1.6;}
+.pill{border-radius:20px;padding:2px 9px;font-size:9.5px;font-weight:600;}
+.pill-orange{background:#fff3e0;color:#ff9500;}
+.pill-red{background:#fff4f3;color:#ff3b30;}
+.pill-blue{background:#f0f6ff;color:#007aff;}
+.pill-gray{background:#f2f2f7;color:#6e6e73;}
+
+/* ALSO WATCH */
+.watch-card{background:#fffbeb;border-radius:14px;padding:16px 18px;border:1px solid #fde68a;margin-bottom:12px;}
+.watch-label{font-size:9px;font-weight:500;color:#f5a623;text-transform:uppercase;letter-spacing:.18em;margin-bottom:10px;}
+.watch-item{font-size:11.5px;font-weight:400;color:#6e6e73;line-height:2;}
+
+/* POFR TABLE */
+.pofr-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.pofr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 6px;font-size:11px;border-radius:6px;}
+.pofr-row:hover{background:#f9f9fb;}
+.pofr-venue{color:#3a3a3c;font-weight:400;}
+.pofr-bar-wrap{flex:1;margin:0 8px;height:4px;background:#f2f2f7;border-radius:2px;overflow:hidden;}
+.pofr-bar{height:100%;border-radius:2px;transition:width .3s;}
+.pofr-pct{font-size:10.5px;font-weight:600;min-width:36px;text-align:right;}
+.bar-good{background:#34c759;}
+.bar-warn{background:#ff9500;}
+.bar-bad{background:#ff3b30;}
+.pct-good{color:#34c759;}
+.pct-warn{color:#ff9500;}
+.pct-bad{color:#ff3b30;}
+
+/* FOOTER */
+.footer{text-align:center;font-size:10px;font-weight:400;color:#c7c7cc;margin-top:20px;}
+
+/* NO DATA */
+.no-data{text-align:center;padding:28px;color:#c7c7cc;font-size:12px;}
+
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr);}
+  .charts-grid,.movers-grid{grid-template-columns:1fr;}
+  .pofr-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
 <div class="page">
 
-<nav>
-  <div class="logo">W</div>
-  <div>
-    <div class="nav-title">Wolt Market Israel</div>
-    <div style="font-size:11px;color:var(--muted)">CX Dashboard</div>
-  </div>
-  <div class="nav-date">W/E June 22, 2026</div>
-</nav>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-label">Wolt Market Israel</div>
+  <div class="header-title">Weekly CX Dashboard</div>
+  <div class="header-sub" id="headerSub">June 22, 2026 &nbsp;&middot;&nbsp; 30 stores</div>
+</div>
 
-<!-- ── VENUE FILTER ── -->
-<div class="venue-filter-card">
-  <div class="venue-filter-header" onclick="toggleFilter()">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--blue)"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
-    <span class="venue-filter-title">Filter by Venue</span>
-    <span id="filterToggleLabel" class="venue-filter-toggle">Show ▾</span>
+<!-- FILTERS -->
+<div class="filters-bar section">
+  <div class="filter-label">Week</div>
+  <div class="week-tabs">
+    <button class="week-tab active" onclick="setWeek('jun22')">W/E June 22</button>
+    <button class="week-tab" onclick="setWeek('jun15')">W/E June 15</button>
   </div>
-  <div id="venueChipsWrap" class="hidden">
-    <div class="venue-chips-wrap" id="venueChips"></div>
-    <div class="venue-filter-footer">
-      <button class="clear-btn" onclick="clearVenueFilter()">✕ Clear selection</button>
-      <span class="selected-summary" id="selectedSummary"></span>
-    </div>
+  <div class="filter-label">Venues <span id="venueCount" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:9px;color:#c7c7cc;">— all selected</span></div>
+  <div class="venue-chips-wrap" id="venueChips"></div>
+  <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+    <button class="filter-toggle" onclick="selectAll()">Select All</button>
+    <button class="filter-toggle" onclick="clearAll()">Clear All</button>
+    <span id="venueFilterNote" style="font-size:10px;color:#aeaeb2;"></span>
   </div>
 </div>
 
-<!-- KPI GRID -->
-<div class="kpi-grid">
-  <div class="kpi"><div class="kpi-label">Orders</div><div class="kpi-val">86,896</div><div class="kpi-sub">Week of June 22</div></div>
-  <div class="kpi"><div class="kpi-label">Goods Rating</div><div class="kpi-val" style="color:var(--amber)">4.56</div><div class="kpi-sub" style="color:var(--red)">▼ 4.58 prev week</div></div>
-  <div class="kpi"><div class="kpi-label">Avg Delivery</div><div class="kpi-val" style="color:var(--amber)">52 min</div><div class="kpi-sub" style="color:var(--red)">▼ 51m prev week</div></div>
-  <div class="kpi"><div class="kpi-label">POFR</div><div class="kpi-val" style="color:var(--green)">89.6%</div><div class="kpi-sub" style="color:var(--green)">▲ +11.7pp vs 77.9%</div></div>
-  <div class="kpi"><div class="kpi-label">Uptime</div><div class="kpi-val" style="color:var(--green)">97.16%</div><div class="kpi-sub">Week of June 22</div></div>
-  <div class="kpi"><div class="kpi-label">Within 45 Min</div><div class="kpi-val" style="color:var(--amber)">51.6%</div><div class="kpi-sub">Market average</div></div>
-</div>
+<!-- KPIs -->
+<div class="kpi-grid section" id="kpiGrid"></div>
 
 <!-- CHARTS -->
-<div class="charts-row">
-  <div class="chart-card"><div class="chart-title">Goods Rating by Venue</div><canvas id="ratingsChart" height="320"></canvas></div>
-  <div class="chart-card"><div class="chart-title">Biggest WoW Movers (Goods Rating)</div><canvas id="moversChart" height="320"></canvas></div>
+<div class="charts-grid section">
+  <div class="card-sm">
+    <div class="chart-title">POFR by Venue</div>
+    <canvas id="pofrChart"></canvas>
+  </div>
+  <div class="card-sm">
+    <div class="chart-title">Goods Rating by Venue</div>
+    <canvas id="ratingChart"></canvas>
+  </div>
 </div>
 
-<!-- HIGH RISK -->
-<div class="section-label">⚠ High Risk Venues</div>
-<div class="risk-grid" id="riskGrid"></div>
+<!-- MOVERS + HIGH RISK -->
+<div class="movers-grid section">
+  <div class="card-sm">
+    <div class="chart-title">Biggest Movers</div>
+    <div id="moversContent"></div>
+  </div>
+  <div class="card-sm">
+    <div class="chart-title">High Risk Stores</div>
+    <div id="riskContent"></div>
+  </div>
+</div>
 
 <!-- ALSO WATCH -->
-<div class="section-label">Also Watch</div>
-<div class="watch-row" id="watchRow"></div>
-
-<!-- TABLE CONTROLS -->
-<div class="section-label">All Venue Scorecard</div>
-<div class="controls">
-  <input class="search" type="text" id="searchInput" placeholder="Search venue..." oninput="applyFilters()">
-  <button class="filter-btn active" id="btn-all" onclick="setMode('all',this)">All venues</button>
-  <button class="filter-btn" id="btn-risk" onclick="setMode('risk',this)">⚠ High risk</button>
-  <button class="filter-btn" id="btn-top" onclick="setMode('top',this)">✅ Rating ≥ 4.70</button>
-  <span class="count-pill" id="countPill">29</span>
+<div class="watch-card section" id="watchCard">
+  <div class="watch-label">Also Watch</div>
+  <div id="watchContent"></div>
 </div>
-<div class="table-wrap">
-<table class="scorecard" id="scorecard">
-<thead>
-  <tr>
-    <th onclick="sortTable('name')">Venue ↕</th>
-    <th onclick="sortTable('goods')" style="text-align:center">Rating ↕</th>
-    <th onclick="sortTable('pofr')" style="text-align:center">POFR ↕</th>
-    <th onclick="sortTable('adt')" style="text-align:center">ADT ↕</th>
-    <th onclick="sortTable('orders')" style="text-align:center">Orders ↕</th>
-    <th onclick="sortTable('uptime')" style="text-align:center">Uptime ↕</th>
-    <th onclick="sortTable('u45m')" style="text-align:center">≤45m ↕</th>
-  </tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
+
+<!-- POFR FULL TABLE -->
+<div class="card section">
+  <div class="chart-title" style="margin-bottom:16px;">POFR — All Venues</div>
+  <div class="pofr-grid" id="pofrTable"></div>
 </div>
 
 <!-- COMPLAINTS -->
-<div class="section-label">Customer Complaint Themes</div>
-<div style="font-size:11px;color:var(--dim);margin-bottom:10px">90 comments — ratings ≤ 3 — week of June 15</div>
-<div class="complaint-grid">
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fef3c7;color:#d97706">12</span><span class="comp-cat">Freshness &amp; Expiry</span></div><div class="comp-venues">Modi'in, Be'er Sheva, Cinema City, Ben Yehuda, Top Dan, Netanya Poleg, HaRova, Netanya Center</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fee2e2;color:#dc2626">11</span><span class="comp-cat">Missing / Non-Delivery</span></div><div class="comp-venues">Ashdod, Neot Shamir, Top Dan, Rishon Maarav, Kiryat Eliezer, Yad Eliyahu, Netanya Center</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#e0f2fe;color:#0284c7">9</span><span class="comp-cat">Cold Chain / Thawed</span></div><div class="comp-venues">Wolfson, Bialik, Herzliya, Petah Tikva, Yad Eliyahu, Rehovot, Top Dan</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#f3e8ff;color:#9333ea">8</span><span class="comp-cat">Packaging / Broken</span></div><div class="comp-venues">Cinema City, Ness Ziona, Netanya Poleg, Kfar Saba, Wolfson, Ben Yehuda, Ramat Hasharon</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fef9c3;color:#ca8a04">6</span><span class="comp-cat">Delivery Delays</span></div><div class="comp-venues">Netanya Center (5.5h!), Be'er Sheva (1.5h), Wolfson (1.5h), Kfar Saba</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fce7f3;color:#be185d">6</span><span class="comp-cat">Wrong / Missing Items</span></div><div class="comp-venues">Kiryon, Kiryat Ono, Jerusalem Talpiot, Neot Shamir, Kfar Saba</div></div>
-  <div class="complaint-card"><div class="comp-header"><span class="comp-pill" style="background:#fee2e2;color:#b91c1c">5</span><span class="comp-cat">Service Issues</span></div><div class="comp-venues">Top Dan, Bialik, Rehovot, Be'er Sheva</div></div>
+<div class="card section">
+  <div class="chart-title" style="margin-bottom:3px;">Customer Complaint Themes</div>
+  <div style="font-size:10px;font-weight:400;color:#c7c7cc;margin-bottom:14px;" id="complaintSub"></div>
+  <div id="complaintsContent"></div>
 </div>
 
-<!-- ACTIONS -->
-<div class="section-label">Actions for Next Week</div>
-<div class="actions-card">
-  <div class="action-item"><div class="action-num">1</div><div><div class="action-title">Ben Yehuda — Emergency Ops Review</div><div class="action-detail">Goods 4.11 (network low), -0.28 WoW, ADT 68 min, ₪9,785 deductions. SM review + goods QA audit.</div><div class="action-venues">Ben Yehuda</div></div></div>
-  <div class="action-item"><div class="action-num">2</div><div><div class="action-title">Petah Tikva — ADT &amp; Uptime Critical</div><div class="action-detail">ADT 72 min (+10 WoW), Uptime 91.4% — worst ADT in network. Dispatch review + system stability check.</div><div class="action-venues">Petah Tikva</div></div></div>
-  <div class="action-item"><div class="action-num">3</div><div><div class="action-title">Cold Chain Audit</div><div class="action-detail">9 comments about thawed/melted frozen goods. Freezer QA at opening + courier bag checks.</div><div class="action-venues">Wolfson · Bialik · Herzliya · Petah Tikva · Rehovot</div></div></div>
-  <div class="action-item"><div class="action-num">4</div><div><div class="action-title">Freshness Protocol Enforcement</div><div class="action-detail">Modi'in (moldy corned beef), Be'er Sheva (expired cottage), Cinema City, Top Dan.</div><div class="action-venues">Modi'in · Be'er Sheva · Cinema City · Top Dan</div></div></div>
-  <div class="action-item"><div class="action-num">5</div><div><div class="action-title">Or Yehuda &amp; Ness Ziona Rating Recovery</div><div class="action-detail">Or Yehuda -0.23, Ness Ziona -0.16, Kiryon -0.15 — investigate with SMs.</div><div class="action-venues">Or Yehuda · Ness Ziona · Kiryon</div></div></div>
-  <div class="action-item"><div class="action-num">6</div><div><div class="action-title">Rishon Maarav ADT Investigation</div><div class="action-detail">ADT 68 min (improved from 73 prev, still critical). Multiple non-delivery complaints.</div><div class="action-venues">Rishon Maarav</div></div></div>
-  <div class="action-item"><div class="action-num">7</div><div><div class="action-title">Rehovot Ops Review</div><div class="action-detail">POFR 81.3%, ADT 65 min, Uptime 92.9% — three metrics in red simultaneously.</div><div class="action-venues">Rehovot</div></div></div>
-</div>
-
-<footer>Wolt Market Israel &nbsp;·&nbsp; Nir Lachmi &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; <a href="https://github.com/nirlachmi-cpu/wolt-cx-dashboard" style="color:var(--blue);text-decoration:none">GitHub</a></footer>
+<div class="footer" id="footer">Wolt Market Israel &nbsp;&middot;&nbsp; Nir Lachmi &nbsp;&middot;&nbsp; June 2026</div>
 </div>
 
 <script>
-const VENUES = [{"name": "Lev Haaretz", "goods": 4.8, "goodsPrev": 4.68, "pofr": 91.8, "adt": 50, "adtPrev": 59, "orders": 1789, "uptime": 99.3, "u45m": 37, "settle": 1296}, {"name": "Kiryat Eliezer", "goods": 4.78, "goodsPrev": 4.69, "pofr": 92.3, "adt": 42, "adtPrev": 40, "orders": 3430, "uptime": 99.7, "u45m": 69, "settle": 2156}, {"name": "Kiryat Ono", "goods": 4.73, "goodsPrev": 4.58, "pofr": 91.0, "adt": 48, "adtPrev": 47, "orders": 3662, "uptime": 99.4, "u45m": 55, "settle": 1927}, {"name": "Florentine", "goods": 4.69, "goodsPrev": 4.78, "pofr": 88.8, "adt": 52, "adtPrev": 42, "orders": 3362, "uptime": 96.5, "u45m": 65, "settle": 4524}, {"name": "Ramat Hasharon", "goods": 4.66, "goodsPrev": 4.77, "pofr": 93.8, "adt": 46, "adtPrev": 47, "orders": 2440, "uptime": 96.2, "u45m": 54, "settle": 2155}, {"name": "Herzliya", "goods": 4.64, "goodsPrev": 4.7, "pofr": 90.0, "adt": 42, "adtPrev": 42, "orders": 4004, "uptime": 94.8, "u45m": 65, "settle": 3716}, {"name": "Wolfson", "goods": 4.62, "goodsPrev": 4.71, "pofr": 93.2, "adt": 51, "adtPrev": 48, "orders": 4139, "uptime": 99.1, "u45m": 56, "settle": 2077}, {"name": "Ashdod", "goods": 4.59, "goodsPrev": 4.68, "pofr": 89.7, "adt": 49, "adtPrev": 49, "orders": 2803, "uptime": 96.7, "u45m": 54, "settle": 3865}, {"name": "Be'er Sheva", "goods": 4.59, "goodsPrev": 4.37, "pofr": 92.0, "adt": 58, "adtPrev": 56, "orders": 3374, "uptime": 97.9, "u45m": 35, "settle": 1889}, {"name": "Petah Tikva", "goods": 4.58, "goodsPrev": 4.54, "pofr": 86.9, "adt": 72, "adtPrev": 62, "orders": 3298, "uptime": 91.4, "u45m": 32, "settle": 2314}, {"name": "Rehovot", "goods": 4.58, "goodsPrev": 4.48, "pofr": 81.3, "adt": 65, "adtPrev": 67, "orders": 2798, "uptime": 92.9, "u45m": 22, "settle": 2196}, {"name": "Netanya Center", "goods": 4.58, "goodsPrev": 4.63, "pofr": 87.1, "adt": 49, "adtPrev": 50, "orders": 3448, "uptime": 99.8, "u45m": 54, "settle": 2373}, {"name": "Modi'in", "goods": 4.56, "goodsPrev": 4.39, "pofr": 83.7, "adt": 56, "adtPrev": 55, "orders": 1980, "uptime": 96.2, "u45m": 41, "settle": 3038}, {"name": "Jerusalem Talpiot", "goods": 4.57, "goodsPrev": 4.4, "pofr": 92.8, "adt": 44, "adtPrev": 50, "orders": 2884, "uptime": 93.6, "u45m": 49, "settle": 3149}, {"name": "Ra'anana", "goods": 4.54, "goodsPrev": 4.53, "pofr": 90.0, "adt": 49, "adtPrev": 46, "orders": 3360, "uptime": 96.0, "u45m": 59, "settle": 2597}, {"name": "Yad Eliyahu", "goods": 4.55, "goodsPrev": 4.6, "pofr": 90.3, "adt": 44, "adtPrev": 43, "orders": 2787, "uptime": 97.7, "u45m": 65, "settle": 2279}, {"name": "Kiryon", "goods": 4.55, "goodsPrev": 4.7, "pofr": 92.8, "adt": 43, "adtPrev": 39, "orders": 2997, "uptime": 99.9, "u45m": 71, "settle": 1074}, {"name": "Kfar Saba", "goods": 4.55, "goodsPrev": 4.57, "pofr": 89.0, "adt": 46, "adtPrev": 44, "orders": 2713, "uptime": 98.6, "u45m": 62, "settle": 1724}, {"name": "Netanya Poleg", "goods": 4.5, "goodsPrev": 4.6, "pofr": 86.4, "adt": 48, "adtPrev": 48, "orders": 2710, "uptime": 98.1, "u45m": 57, "settle": 1949}, {"name": "HaRova", "goods": 4.5, "goodsPrev": 4.63, "pofr": 92.5, "adt": 49, "adtPrev": 50, "orders": 3455, "uptime": 99.1, "u45m": 52, "settle": 7384}, {"name": "Bialik", "goods": 4.49, "goodsPrev": 4.56, "pofr": 86.0, "adt": 68, "adtPrev": 62, "orders": 5469, "uptime": 95.0, "u45m": 35, "settle": 0}, {"name": "Cinema City", "goods": 4.48, "goodsPrev": 4.59, "pofr": 89.8, "adt": 43, "adtPrev": 42, "orders": 2022, "uptime": 97.8, "u45m": 69, "settle": 968}, {"name": "Ness Ziona", "goods": 4.48, "goodsPrev": 4.64, "pofr": 94.5, "adt": 47, "adtPrev": 46, "orders": 1748, "uptime": 97.6, "u45m": 59, "settle": 711}, {"name": "Ashkelon", "goods": 4.46, "goodsPrev": 4.6, "pofr": 81.9, "adt": 52, "adtPrev": 50, "orders": 2139, "uptime": 97.4, "u45m": 52, "settle": 564}, {"name": "Top Dan", "goods": 4.45, "goodsPrev": 4.48, "pofr": 88.8, "adt": 63, "adtPrev": 58, "orders": 2590, "uptime": 95.0, "u45m": 39, "settle": 3591}, {"name": "Neot Shamir", "goods": 4.45, "goodsPrev": 4.58, "pofr": 92.4, "adt": 51, "adtPrev": 57, "orders": 1919, "uptime": 97.7, "u45m": 46, "settle": 1068}, {"name": "Or Yehuda", "goods": 4.38, "goodsPrev": 4.61, "pofr": 90.2, "adt": 44, "adtPrev": 45, "orders": 1388, "uptime": 98.8, "u45m": 57, "settle": 848}, {"name": "Rishon Maarav", "goods": 4.4, "goodsPrev": 4.33, "pofr": 91.1, "adt": 68, "adtPrev": 73, "orders": 3373, "uptime": 98.6, "u45m": 24, "settle": 3671}, {"name": "Ben Yehuda", "goods": 4.11, "goodsPrev": 4.39, "pofr": 86.9, "adt": 68, "adtPrev": 65, "orders": 3518, "uptime": 94.5, "u45m": 27, "settle": 9785}];
+// ─── DATA ───────────────────────────────────────────────────────────────────
 
-function gColor(g) { return g>=4.7?'#16a34a':g>=4.5?'#d97706':'#dc2626'; }
-function isHighRisk(v) { return v.goods<4.5||v.adt>60||v.uptime<96.0; }
-function isWatch(v) { return !isHighRisk(v)&&(v.goods<4.60||v.adt>55||v.uptime<97.0||v.pofr<87.0); }
+const WEEKS = {
+  jun22: {
+    label: 'W/E June 22, 2026',
+    sub: 'June 22, 2026 · 30 stores · vs. June 15',
+    kpi: {
+      orders: { val: '86,145', badge: '▼ 0.9%', dir: 'dn' },
+      rating: { val: '4.57', badge: '▲ +0.01', dir: 'up', target: 'Target 4.70' },
+      adt:    { val: '49 min', badge: '▲ 52→49', dir: 'up', target: 'Target 42 min' },
+      pofr:   { val: '90.3%', badge: '▲ +0.7pp', dir: 'up', target: 'Target 95.2%' },
+      settle: { val: '₪152,531', badge: 'Stable', dir: 'up', target: 'ILS' },
+    },
+    pofr: {
+      'Yad Eliyahu':91.50,'Wolfson':92.65,'Top Dan':92.62,'Rishon Maarav':90.93,
+      'Rehovot':86.65,'Ramat Hasharon':93.62,"Ra'anana":91.86,'Petah Tikva':88.47,
+      'Or Yehuda':90.86,'Netanya Poleg':89.36,'Netanya Center':87.16,'Ness Ziona':92.74,
+      'Neot Shamir':88.81,"Modi'in":84.39,'Lev Haaretz':91.50,'Kiryon':92.06,
+      'Kiryat Ono':90.73,'Kiryat Eliezer':92.59,'Kfar Saba':87.74,
+      'Jerusalem Talpiot':89.97,'Herzliya':90.18,'HaRova':92.01,'Hadera':97.01,
+      'Florentine':91.61,'Cinema City':90.39,'Bialik':90.22,'Ben Yehuda':86.91,
+      "Be'er Sheva":91.38,'Ashkelon':85.43,'Ashdod':87.74,
+    },
+    ratings: {
+      'Wolfson':4.78,'Lev Haaretz':4.72,'Netanya Center':4.72,'Kiryat Eliezer':4.71,
+      'Neot Shamir':4.63,'Florentine':4.62,'Kiryat Ono':4.61,'Hadera':4.60,
+      'Kiryon':4.59,'Rishon Maarav':4.58,"Ra'anana":4.57,'Yad Eliyahu':4.57,
+      'Rehovot':4.56,'Bialik':4.56,'HaRova':4.55,'Or Yehuda':4.54,
+      'Ness Ziona':4.53,'Cinema City':4.52,'Ashdod':4.52,'Ramat Hasharon':4.51,
+      'Petah Tikva':4.50,'Netanya Poleg':4.50,"Be'er Sheva":4.49,'Kfar Saba':4.49,
+      "Modi'in":4.48,'Top Dan':4.47,'Jerusalem Talpiot':4.43,'Herzliya':4.45,
+      'Kiryat Ono':4.61,'Ben Yehuda':4.29,'Ashkelon':4.52,
+    },
+    settlements: {
+      'Ben Yehuda':18465,'Petah Tikva':12063,'Rehovot':10301,'Florentine':8922,
+      'Herzliya':6780,'Top Dan':5840,'Wolfson':5210,'Bialik':4900,
+      'Ashdod':3607,'Kfar Saba':3659,'Kiryon':3527,'Yad Eliyahu':3200,
+    },
+    movers: {
+      up: [
+        {venue:'Wolfson Rating',val:'4.62→4.78'},
+        {venue:'Neot Shamir',val:'4.45→4.63'},
+        {venue:'Netanya Center',val:'4.58→4.72'},
+        {venue:'Rehovot Uptime',val:'92.9→99.9%'},
+        {venue:'Ben Yehuda Rating',val:'4.11→4.29'},
+      ],
+      dn: [
+        {venue:'Herzliya Rating',val:'4.64→4.45'},
+        {venue:"J. Talpiot Rating",val:'4.57→4.43'},
+        {venue:'Kfar Saba Uptime',val:'98.6→83.7%'},
+        {venue:"Modi'in POFR",val:'84.4%'},
+        {venue:'Ashdod Uptime',val:'96.7→93.2%'},
+      ],
+    },
+    risk: [
+      {name:'Ben Yehuda',meta:'₪18,465 ILS · ADT 64 min · POFR 86.9% · Rejection 1.38%',cx:'Wrong orders, broken eggs, missing items, packaging failure.'},
+      {name:'Herzliya',meta:'Rating 4.45 (▼ from 4.64) · ADT 42 min · ₪6,780 ILS',cx:'Spoiled items, cold chain failure, sloppy packaging, rotten produce.'},
+      {name:'Ashdod',meta:'Rejection 1.10% · Uptime 93.2% · ₪3,607 ILS',cx:'Wrong orders, broken eggs, non-fresh produce.'},
+      {name:'Kfar Saba',meta:'Uptime 83.7% (▼ from 98.6%) · 2h15m delay · ₪3,659 ILS',cx:'Rotten carrots, expired chicken, items arriving warm.'},
+      {name:"Yad Eliyahu 🚨",meta:'Rating 4.57 · ADT 44 min · Food safety incident',cx:'Illness reported after eating cake — cold chain & expiry suspected.',alert:true},
+    ],
+    watch: [
+      {venue:'Jerusalem Talpiot',text:'Rating 4.57→4.43. Packaging failures & wrong items.'},
+      {venue:'Kiryat Ono',text:'Rating 4.73→4.61. Non-delivery & expiry complaints.'},
+      {venue:"Modi'in",text:"POFR 84.4%, lowest in network. Ashkelon 85.4%, Ben Yehuda 86.9%."},
+    ],
+    complaints: [
+      {name:'Spoiled / Near-Expiry',count:18,cls:'pill-orange',venues:"Bialik · Wolfson · Netanya Center · Kfar Saba · Rishon Maarav · Kiryat Eliezer · Florentine · Top Dan · Ra'anana · Ashkelon"},
+      {name:'Wrong / Missing Items',count:14,cls:'pill-red',venues:"Kiryat Eliezer · Top Dan (2x) · Wolfson · Ashdod · Kiryat Ono · HaRova · Bialik · Ness Ziona · Or Yehuda · Ramat Hasharon · Rehovot"},
+      {name:'Packaging Issues',count:8,cls:'pill-blue',venues:"Ben Yehuda · Florentine · Herzliya · Jerusalem Talpiot · Ra'anana · Ramat Hasharon · Top Dan · Yad Eliyahu"},
+      {name:'Cold Chain Failure',count:8,cls:'pill-gray',venues:"Or Yehuda · Petah Tikva (2x) · Be'er Sheva · Wolfson (2x) · Cinema City · Kfar Saba"},
+      {name:'Food Safety 🚨',count:1,cls:'pill-red',venues:"Yad Eliyahu — illness reported after eating cake"},
+    ],
+    totalComments: 87,
+  },
+  jun15: {
+    label: 'W/E June 15, 2026',
+    sub: 'June 15, 2026 · 30 stores · vs. June 8',
+    kpi: {
+      orders: { val: '86,896', badge: 'Baseline', dir: 'up' },
+      rating: { val: '4.56', badge: 'Baseline', dir: 'up', target: 'Target 4.70' },
+      adt:    { val: '52 min', badge: 'Baseline', dir: 'dn', target: 'Target 42 min' },
+      pofr:   { val: '89.6%', badge: 'Baseline', dir: 'up', target: 'Target 95.2%' },
+      settle: { val: '₪152,897', badge: 'Baseline', dir: 'up', target: 'ILS' },
+    },
+    pofr: {
+      'Wolfson':91.20,'Top Dan':90.80,'Rishon Maarav':91.50,'Rehovot':88.10,
+      'Ramat Hasharon':92.00,"Ra'anana":90.20,'Petah Tikva':87.90,
+      'Or Yehuda':89.40,'Netanya Poleg':88.80,'Netanya Center':90.20,
+      'Ness Ziona':91.30,'Neot Shamir':87.10,"Modi'in":86.50,
+      'Lev Haaretz':90.80,'Kiryon':91.60,'Kiryat Ono':91.90,
+      'Kiryat Eliezer':91.80,'Kfar Saba':91.20,'Yad Eliyahu':90.10,
+      'Jerusalem Talpiot':91.40,'Herzliya':91.80,'HaRova':91.50,'Hadera':95.40,
+      'Florentine':90.20,'Cinema City':89.10,'Bialik':89.90,'Ben Yehuda':84.20,
+      "Be'er Sheva":90.10,'Ashkelon':84.80,'Ashdod':89.20,
+    },
+    ratings: {
+      'Wolfson':4.62,'Lev Haaretz':4.71,'Netanya Center':4.58,'Kiryat Eliezer':4.70,
+      'Neot Shamir':4.45,'Florentine':4.61,'Kiryat Ono':4.73,'Hadera':4.59,
+      'Kiryon':4.58,'Rishon Maarav':4.57,"Ra'anana":4.56,'Yad Eliyahu':4.56,
+      'Rehovot':4.55,'Bialik':4.55,'HaRova':4.54,'Or Yehuda':4.53,
+      'Ness Ziona':4.52,'Cinema City':4.51,'Ashdod':4.51,'Ramat Hasharon':4.50,
+      'Petah Tikva':4.49,'Netanya Poleg':4.49,"Be'er Sheva":4.59,'Kfar Saba':4.52,
+      "Modi'in":4.47,'Top Dan':4.46,'Jerusalem Talpiot':4.57,'Herzliya':4.64,
+      'Ben Yehuda':4.11,'Ashkelon':4.50,
+    },
+    settlements:{
+      'Ben Yehuda':19200,'Petah Tikva':11800,'Rehovot':10100,'Florentine':8600,
+      'Herzliya':6200,'Top Dan':5600,'Wolfson':5000,'Bialik':4700,
+      'Ashdod':3800,'Kfar Saba':3500,'Kiryon':3400,'Yad Eliyahu':3100,
+    },
+    movers:{up:[],dn:[]},
+    risk:[],
+    watch:[],
+    complaints:[
+      {name:'Spoiled / Near-Expiry',count:14,cls:'pill-orange',venues:"Wolfson · Bialik · Kfar Saba · Netanya Center · Florentine · Top Dan"},
+      {name:'Wrong / Missing Items',count:11,cls:'pill-red',venues:"Top Dan · Wolfson · Ashdod · Kiryat Ono · HaRova · Bialik · Or Yehuda"},
+      {name:'Packaging Issues',count:6,cls:'pill-blue',venues:"Ben Yehuda · Herzliya · Jerusalem Talpiot · Ramat Hasharon · Top Dan"},
+      {name:'Cold Chain Failure',count:5,cls:'pill-gray',venues:"Or Yehuda · Petah Tikva · Be'er Sheva · Cinema City · Kfar Saba"},
+    ],
+    totalComments: 71,
+  }
+};
 
-// ── Venue filter state ────────────────────────────────────────────────────────
-let selectedVenues = new Set();
-let filterOpen = false;
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentWeek = 'jun22';
+let selectedVenues = new Set(); // empty = all
+let pofrChartInst = null;
+let ratingChartInst = null;
 
-function toggleFilter() {
-  filterOpen = !filterOpen;
-  document.getElementById('venueChipsWrap').classList.toggle('hidden', !filterOpen);
-  document.getElementById('filterToggleLabel').textContent = filterOpen ? 'Hide ▴' : 'Show ▾';
+const allVenues = Object.keys(WEEKS.jun22.pofr).sort();
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  buildVenueChips();
+  render();
 }
 
-function buildChips() {
+function buildVenueChips() {
   const wrap = document.getElementById('venueChips');
-  [...VENUES].sort((a,b)=>a.name.localeCompare(b.name)).forEach(v => {
-    const chip = document.createElement('div');
-    chip.className = 'venue-chip' + (isHighRisk(v) ? ' risk' : '');
-    chip.textContent = v.name;
-    chip.dataset.name = v.name;
-    chip.onclick = () => toggleVenue(v.name, chip);
+  wrap.innerHTML = '';
+  allVenues.forEach(v => {
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.textContent = v;
+    chip.dataset.venue = v;
+    chip.onclick = () => toggleVenue(v);
     wrap.appendChild(chip);
   });
 }
 
-function toggleVenue(name, chip) {
-  if (selectedVenues.has(name)) {
-    selectedVenues.delete(name);
-    chip.classList.remove('selected');
-  } else {
-    selectedVenues.add(name);
-    chip.classList.add('selected');
-  }
-  updateSelectedSummary();
-  applyFilters();
+function toggleVenue(v) {
+  if (selectedVenues.has(v)) selectedVenues.delete(v);
+  else selectedVenues.add(v);
+  updateChipState();
+  render();
 }
 
-function clearVenueFilter() {
+function selectAll() {
   selectedVenues.clear();
-  document.querySelectorAll('.venue-chip').forEach(c => c.classList.remove('selected'));
-  updateSelectedSummary();
-  applyFilters();
+  updateChipState();
+  render();
 }
 
-function updateSelectedSummary() {
-  const n = selectedVenues.size;
-  document.getElementById('selectedSummary').textContent = n > 0
-    ? n + ' venue' + (n>1?'s':'') + ' selected'
-    : '';
+function clearAll() {
+  allVenues.forEach(v => selectedVenues.add(v));
+  // Actually keep at least one
+  if (selectedVenues.size === allVenues.length) selectedVenues.clear();
+  updateChipState();
+  render();
 }
 
-// ── Table state ───────────────────────────────────────────────────────────────
-let sortCol = 'goods', sortDir = -1, modeFilter = 'all', searchQ = '';
-
-function applyFilters() {
-  searchQ = document.getElementById('searchInput').value.toLowerCase();
-  renderTable();
-}
-
-function setMode(mode, btn) {
-  modeFilter = mode;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable();
-}
-
-function sortTable(col) {
-  sortDir = sortCol===col ? sortDir*-1 : (col==='name'?1:-1);
-  sortCol = col;
-  renderTable();
-}
-
-function renderTable() {
-  let data = [...VENUES];
-  // Venue filter takes priority
-  if (selectedVenues.size > 0) {
-    data = data.filter(v => selectedVenues.has(v.name));
-  } else {
-    if (modeFilter==='risk') data = data.filter(isHighRisk);
-    if (modeFilter==='top') data = data.filter(v=>v.goods>=4.70);
-    if (searchQ) data = data.filter(v=>v.name.toLowerCase().includes(searchQ));
-  }
-  data.sort((a,b) => {
-    let av=a[sortCol], bv=b[sortCol];
-    return typeof av==='string' ? sortDir*av.localeCompare(bv) : sortDir*(av-bv);
+function updateChipState() {
+  const chips = document.querySelectorAll('.chip[data-venue]');
+  chips.forEach(c => {
+    c.classList.toggle('active', selectedVenues.has(c.dataset.venue));
   });
-  document.getElementById('countPill').textContent = data.length;
-  const adtC = a => a<=45?'#16a34a':a<=58?'#d97706':'#dc2626';
-  const poC  = p => p>=90?'#16a34a':p>=82?'#d97706':'#dc2626';
-  const upC  = u => u>=97?'#16a34a':u>=95?'#d97706':'#dc2626';
-  document.getElementById('tbody').innerHTML = data.map((v,i) => {
-    const dot = isHighRisk(v)?'<span class="dot-red"></span>':'';
-    const d = (v.goods-v.goodsPrev).toFixed(2);
-    const ds = d>0?`<span style="font-size:10px;color:#16a34a;margin-left:4px">▲${d}</span>`
-                  :d<0?`<span style="font-size:10px;color:#dc2626;margin-left:4px">▼${Math.abs(d)}</span>`:'';
-    return `<tr style="background:${i%2?'#fafafa':'#fff'}">
-      <td>${dot}${v.name}</td>
-      <td style="text-align:center;font-weight:800;color:${gColor(v.goods)}">${v.goods.toFixed(2)}${ds}</td>
-      <td style="text-align:center;color:${poC(v.pofr)}">${v.pofr.toFixed(0)}%</td>
-      <td style="text-align:center;color:${adtC(v.adt)}">${v.adt}m</td>
-      <td style="text-align:center">${v.orders.toLocaleString()}</td>
-      <td style="text-align:center;color:${upC(v.uptime)}">${v.uptime.toFixed(1)}%</td>
-      <td style="text-align:center">${v.u45m}%</td>
-    </tr>`;
+  const count = selectedVenues.size;
+  const note = document.getElementById('venueCount');
+  const filterNote = document.getElementById('venueFilterNote');
+  if (count === 0) {
+    note.textContent = '— all selected';
+    filterNote.textContent = '';
+  } else {
+    note.textContent = `— ${count} selected`;
+    filterNote.textContent = `Showing ${count} venue${count>1?'s':''}`;
+  }
+}
+
+function setWeek(w) {
+  currentWeek = w;
+  document.querySelectorAll('.week-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && w==='jun22') || (i===1 && w==='jun15'));
+  });
+  render();
+}
+
+function getActiveVenues() {
+  return selectedVenues.size === 0 ? allVenues : [...selectedVenues];
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
+  const wk = WEEKS[currentWeek];
+  const venues = getActiveVenues();
+  
+  document.getElementById('headerSub').innerHTML = wk.sub.replace('·','&middot;').replace('·','&middot;');
+
+  renderKPIs(wk, venues);
+  renderPofrChart(wk, venues);
+  renderRatingChart(wk, venues);
+  renderMovers(wk, venues);
+  renderRisk(wk, venues);
+  renderWatch(wk, venues);
+  renderPofrTable(wk, venues);
+  renderComplaints(wk, venues);
+}
+
+function renderKPIs(wk, venues) {
+  const grid = document.getElementById('kpiGrid');
+  const k = wk.kpi;
+
+  // If filtered to specific venues, show aggregate POFR/Rating for those venues
+  let pofrVal = k.pofr.val, pofrBadge = k.pofr.badge, pofrDir = k.pofr.dir;
+  let ratingVal = k.rating.val;
+
+  if (selectedVenues.size > 0) {
+    const pofrVals = venues.map(v => wk.pofr[v]).filter(x => x != null);
+    if (pofrVals.length) {
+      const avg = (pofrVals.reduce((a,b)=>a+b,0)/pofrVals.length).toFixed(1);
+      pofrVal = avg + '%';
+      pofrBadge = venues.length + ' venues';
+      pofrDir = 'up';
+    }
+    const ratingVals = venues.map(v => wk.ratings[v]).filter(x => x != null);
+    if (ratingVals.length) {
+      ratingVal = (ratingVals.reduce((a,b)=>a+b,0)/ratingVals.length).toFixed(2);
+    }
+  }
+
+  const kpis = [
+    {label:'Orders', val:k.orders.val, badge:k.orders.badge, dir:k.orders.dir},
+    {label:'Rating', val:ratingVal, badge:k.rating.badge, dir:k.rating.dir, target:k.rating.target},
+    {label:'Avg ADT', val:k.adt.val, badge:k.adt.badge, dir:k.adt.dir, target:k.adt.target},
+    {label:'POFR', val:pofrVal, badge:pofrBadge, dir:pofrDir, target:k.pofr.target},
+    {label:'Settlements', val:k.settle.val, badge:k.settle.badge, dir:k.settle.dir, target:k.settle.target},
+  ];
+
+  grid.innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-val${k.label==='POFR'&&parseFloat(k.val)<90?' bad':''}">${k.val}</div>
+      <div><span class="kpi-badge ${k.dir==='up'?'badge-green':'badge-red'}">${k.badge}</span></div>
+      ${k.target ? `<div class="kpi-target">${k.target}</div>` : ''}
+      <div class="kpi-label">${k.label}</div>
+    </div>
+  `).join('');
+}
+
+function renderPofrChart(wk, venues) {
+  const ctx = document.getElementById('pofrChart').getContext('2d');
+  if (pofrChartInst) pofrChartInst.destroy();
+
+  const sorted = venues
+    .map(v => ({ v, val: wk.pofr[v] || 0 }))
+    .filter(x => x.val > 0)
+    .sort((a,b) => a.val - b.val);
+
+  const labels = sorted.map(x => x.v);
+  const data = sorted.map(x => x.val);
+  const colors = data.map(v => v >= 92 ? '#34c759' : v >= 88 ? '#ff9500' : '#ff3b30');
+
+  pofrChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.raw.toFixed(1)}%` }
+      }},
+      scales: {
+        x: { min: 80, max: 100, ticks: { font:{family:'Nunito',size:9}, color:'#aeaeb2', callback: v=>v+'%' }, grid: { color:'#f5f5f7' } },
+        y: { ticks: { font:{family:'Nunito',size:9}, color:'#3a3a3c' }, grid: { display:false } }
+      }
+    }
+  });
+
+  // Adjust canvas height dynamically
+  document.getElementById('pofrChart').style.maxHeight = Math.max(180, sorted.length * 20) + 'px';
+}
+
+function renderRatingChart(wk, venues) {
+  const ctx = document.getElementById('ratingChart').getContext('2d');
+  if (ratingChartInst) ratingChartInst.destroy();
+
+  const sorted = venues
+    .map(v => ({ v, val: wk.ratings[v] || 0 }))
+    .filter(x => x.val > 0)
+    .sort((a,b) => b.val - a.val)
+    .slice(0, 20);
+
+  const labels = sorted.map(x => x.v);
+  const data = sorted.map(x => x.val);
+  const colors = data.map(v => v >= 4.65 ? '#34c759' : v >= 4.50 ? '#007aff' : v >= 4.35 ? '#ff9500' : '#ff3b30');
+
+  ratingChartInst = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.raw.toFixed(2)}` }
+      }},
+      scales: {
+        x: { min: 4.0, max: 5.0, ticks: { font:{family:'Nunito',size:9}, color:'#aeaeb2' }, grid: { color:'#f5f5f7' } },
+        y: { ticks: { font:{family:'Nunito',size:9}, color:'#3a3a3c' }, grid: { display:false } }
+      }
+    }
+  });
+
+  document.getElementById('ratingChart').style.maxHeight = Math.max(180, sorted.length * 20) + 'px';
+}
+
+function renderMovers(wk, venues) {
+  const el = document.getElementById('moversContent');
+  if (!wk.movers.up.length) {
+    el.innerHTML = '<div class="no-data">No comparison data for this week</div>'; return;
+  }
+
+  const up = wk.movers.up.filter(m => selectedVenues.size===0 || venues.some(v => m.venue.includes(v)));
+  const dn = wk.movers.dn.filter(m => selectedVenues.size===0 || venues.some(v => m.venue.includes(v)));
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div>
+        <div class="mover-label" style="color:#34c759;">▲ Improved</div>
+        ${(up.length?up:wk.movers.up).map(m=>`
+          <div class="mover-row">
+            <span class="mover-venue">${m.venue}</span>
+            <span class="mover-val-up">${m.val}</span>
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="mover-label" style="color:#ff3b30;">▼ Declined</div>
+        ${(dn.length?dn:wk.movers.dn).map(m=>`
+          <div class="mover-row">
+            <span class="mover-venue">${m.venue}</span>
+            <span class="mover-val-dn">${m.val}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderRisk(wk, venues) {
+  const el = document.getElementById('riskContent');
+  const items = selectedVenues.size === 0
+    ? wk.risk
+    : wk.risk.filter(r => venues.some(v => r.name.includes(v)));
+
+  if (!items.length) {
+    el.innerHTML = '<div class="no-data">No high risk stores in selection</div>'; return;
+  }
+
+  el.innerHTML = items.map(r => `
+    <div class="risk-item">
+      <div class="risk-name">${r.name}</div>
+      <div class="risk-meta">${r.meta}</div>
+      <div class="risk-cx" style="${r.alert?'color:#ff3b30;':''}">${r.cx}</div>
+    </div>`).join('');
+}
+
+function renderWatch(wk, venues) {
+  const el = document.getElementById('watchContent');
+  const card = document.getElementById('watchCard');
+  const items = selectedVenues.size === 0
+    ? wk.watch
+    : wk.watch.filter(w => venues.some(v => w.venue.includes(v)));
+
+  if (!items.length) { card.style.display='none'; return; }
+  card.style.display='';
+  el.innerHTML = items.map(w => `
+    <div class="watch-item">
+      <strong style="color:#1d1d1f;">${w.venue}</strong> &mdash; ${w.text}
+    </div>`).join('');
+}
+
+function renderPofrTable(wk, venues) {
+  const el = document.getElementById('pofrTable');
+  const sorted = venues
+    .map(v => ({ v, val: wk.pofr[v] || 0 }))
+    .filter(x => x.val > 0)
+    .sort((a,b) => b.val - a.val);
+
+  el.innerHTML = sorted.map(({ v, val }) => {
+    const cls = val >= 92 ? 'bar-good pct-good' : val >= 88 ? 'bar-warn pct-warn' : 'bar-bad pct-bad';
+    const barCls = val >= 92 ? 'bar-good' : val >= 88 ? 'bar-warn' : 'bar-bad';
+    const pctCls = val >= 92 ? 'pct-good' : val >= 88 ? 'pct-warn' : 'pct-bad';
+    const w = ((val - 80) / 20 * 100).toFixed(1);
+    return `
+      <div class="pofr-row">
+        <span class="pofr-venue" style="min-width:110px;">${v}</span>
+        <div class="pofr-bar-wrap"><div class="pofr-bar ${barCls}" style="width:${w}%"></div></div>
+        <span class="pofr-pct ${pctCls}">${val.toFixed(1)}%</span>
+      </div>`;
   }).join('');
 }
 
-// ── Risk & Watch cards ────────────────────────────────────────────────────────
-VENUES.filter(isHighRisk).forEach(v => {
-  const tags=[];
-  if(v.goods<4.5) tags.push(`<span class="tag">Rating ${v.goods.toFixed(2)}</span>`);
-  if(v.adt>60) tags.push(`<span class="tag">ADT ${v.adt}m</span>`);
-  if(v.uptime<96) tags.push(`<span class="tag">Uptime ${v.uptime.toFixed(1)}%</span>`);
-  document.getElementById('riskGrid').innerHTML+=`<div class="risk-card"><div class="risk-name">${v.name}</div><div class="risk-tags">${tags.join('')}</div></div>`;
-});
-VENUES.filter(isWatch).forEach(v=>{
-  const r=[];
-  if(v.goods<4.60) r.push(`Rating ${v.goods.toFixed(2)}`);
-  if(v.adt>55) r.push(`ADT ${v.adt}m`);
-  if(v.uptime<97) r.push(`Uptime ${v.uptime.toFixed(1)}%`);
-  if(v.pofr<87) r.push(`POFR ${v.pofr.toFixed(0)}%`);
-  document.getElementById('watchRow').innerHTML+=`<div class="watch-item">${v.name} <span style="font-weight:400;color:#b45309">${r.join(' · ')}</span></div>`;
-});
+function renderComplaints(wk, venues) {
+  const el = document.getElementById('complaintsContent');
+  const sub = document.getElementById('complaintSub');
+  sub.textContent = `${wk.totalComments} store-actionable comments · ${wk.label}`;
 
-// ── Charts ───────────────────────────────────────────────────────────────────
-const sorted=[...VENUES].sort((a,b)=>a.goods-b.goods);
-new Chart(document.getElementById('ratingsChart'),{
-  type:'bar',
-  data:{labels:sorted.map(v=>v.name),datasets:[{data:sorted.map(v=>v.goods),backgroundColor:sorted.map(v=>gColor(v.goods)+'33'),borderColor:sorted.map(v=>gColor(v.goods)),borderWidth:1.5,borderRadius:4}]},
-  options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` Rating: ${c.parsed.x.toFixed(2)}`}}},scales:{x:{min:3.8,max:5.0,grid:{color:'#f3f4f6'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}
-});
-const movers=[...VENUES].map(v=>{return{...v,diff:v.goods-v.goodsPrev}}).sort((a,b)=>b.diff-a.diff);
-const moverData=[...movers.slice(-5),...movers.slice(0,5)];
-new Chart(document.getElementById('moversChart'),{
-  type:'bar',
-  data:{labels:moverData.map(v=>v.name),datasets:[{data:moverData.map(v=>v.diff),backgroundColor:moverData.map(v=>v.diff>=0?'#16a34a33':'#dc262633'),borderColor:moverData.map(v=>v.diff>=0?'#16a34a':'#dc2626'),borderWidth:1.5,borderRadius:4}]},
-  options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.parsed.x>=0?'+':''}${c.parsed.x.toFixed(2)}`}}},scales:{x:{grid:{color:'#f3f4f6'},ticks:{font:{size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}
-});
+  const items = selectedVenues.size === 0
+    ? wk.complaints
+    : wk.complaints.map(c => {
+        const filteredVenues = c.venues.split(' · ').filter(vv => venues.some(v => vv.includes(v)));
+        if (!filteredVenues.length) return null;
+        return { ...c, venues: filteredVenues.join(' · ') };
+      }).filter(Boolean);
 
-buildChips();
-renderTable();
+  if (!items.length) {
+    el.innerHTML = '<div class="no-data">No complaints data for selection</div>'; return;
+  }
+
+  el.innerHTML = items.map(c => `
+    <div class="complaint-row">
+      <div class="complaint-head">
+        <span class="complaint-name">${c.name}</span>
+        <span class="pill ${c.cls}">${c.count}</span>
+      </div>
+      <div class="complaint-venues">${c.venues}</div>
+    </div>`).join('');
+}
+
+init();
 </script>
 </body>
 </html>
